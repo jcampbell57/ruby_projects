@@ -15,7 +15,7 @@ def bubble_sort(array)
       else
         if sort_results.all? { |num| num == -1 }
             finished = true
-        end
+        end 
         # p 'sort results:'
         # p sort_results
         sort_results = []

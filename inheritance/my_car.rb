@@ -101,7 +101,7 @@ MyCar.gas_milage(16, 350)
 
 puts WRX
 puts WRX.age
-
+ 
 puts "---MyCar method lookup---"
 puts MyCar.ancestors
 puts "---MyTruck method lookup---"

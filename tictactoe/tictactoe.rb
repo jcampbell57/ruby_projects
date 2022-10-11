@@ -17,7 +17,7 @@ class Game
   @@current_player = 0
   @@player_count = 0
   @@board = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-  @@computer_options = [0, 1, 2, 3, 4, 5, 6, 7, 8] 
+  @@computer_options = [1, 2, 3, 4, 5, 6, 7, 8, 9] 
 
   def self.play
     display_board()
@@ -31,6 +31,7 @@ class Game
       select_move()
     else
       @@board[input - 1] = @@current_player.marker  
+      @@computer_options.delete(input)
       check_for_winner()
     end
   end
@@ -45,9 +46,18 @@ class Game
   end
 
   def self.select_move
-    p "#{@@current_player.marker}'s turn. Select your move:"
-    input = gets.chomp.to_i
-    verify_input(input)
+    unless @@current_player == @@computer
+      p "#{@@current_player.marker}'s turn. Select your move:"
+      input = gets.chomp.to_i
+      verify_input(input)
+    else
+      p "Computer's turn:"
+      sleep 2
+      computer_selection = @@computer_options.sample
+      @@board[computer_selection - 1] = @@current_player.marker  
+      @@computer_options.delete(computer_selection)
+      check_for_winner()
+    end
   end
 
   def self.get_player_count
@@ -78,8 +88,6 @@ class Game
   end
 
   def self.change_player
-    # p @@current_player
-    # p @@current_player == @@player1
     if @@player_count == 2
       if @@current_player == @@player1
         @@current_player = @@player2
@@ -93,7 +101,6 @@ class Game
         @@current_player = @@player1
       end
     end
-    # p @@current_player
   end
 
   def self.check_for_winner
@@ -131,10 +138,6 @@ class Player
   def initialize(marker)
     @marker = marker
   end
-end
-
-class Computer
-
 end
 
 Game.start_game()

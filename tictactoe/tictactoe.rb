@@ -5,15 +5,19 @@ class Game
   def self.start_game
     p "One player or two?"
     get_player_count()
-    if @@player_count.between?(1,2)
-      play()
-    end
+    initialize_players(@@player_count)
+    play()
   end
 
   private 
 
+  @@player1 = 0
+  @@player2 = 0
+  @@computer = 0
+  @@current_player = 0
   @@player_count = 0
-  @@board = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] 
+  @@board = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+  @@computer_options = [0, 1, 2, 3, 4, 5, 6, 7, 8] 
 
   def self.play
     display_board()
@@ -26,7 +30,7 @@ class Game
       display_board()
       select_move()
     else
-      @@board[input - 1] = "X"  
+      @@board[input - 1] = @@current_player.marker  
       check_for_winner()
     end
   end
@@ -41,7 +45,7 @@ class Game
   end
 
   def self.select_move
-    p "Select your move:"
+    p "#{@@current_player.marker}'s turn. Select your move:"
     input = gets.chomp.to_i
     verify_input(input)
   end
@@ -57,10 +61,39 @@ class Game
     end
   end
 
+  def self.initialize_players(player_count)
+    @@player1 = Player.new("X")
+    @@current_player = @@player1
+    if player_count == 2 
+      @@player2 = Player.new("O")
+    else
+      @@computer = Player.new("O")
+    end
+  end
+
   def self.display_board
     p @@board[0..2]
     p @@board[3..5]
     p @@board[6..8]
+  end
+
+  def self.change_player
+    # p @@current_player
+    # p @@current_player == @@player1
+    if @@player_count == 2
+      if @@current_player == @@player1
+        @@current_player = @@player2
+      else
+        @@current_player = @@player1
+      end
+    else
+      if @@current_player == @@player1
+        @@current_player = @@computer
+      else
+        @@current_player = @@player1
+      end
+    end
+    # p @@current_player
   end
 
   def self.check_for_winner
@@ -85,6 +118,7 @@ class Game
       display_board()
       puts 'O wins!'
     else
+      change_player()
       display_board()
       select_move()
     end
@@ -92,7 +126,11 @@ class Game
 end
 
 class Player
+  attr_reader :marker
 
+  def initialize(marker)
+    @marker = marker
+  end
 end
 
 class Computer

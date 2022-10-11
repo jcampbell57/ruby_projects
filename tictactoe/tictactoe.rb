@@ -13,26 +13,37 @@ class Game
   private 
 
   @@player_count = 0
-  @@board = [
-    [1, 2, 3], 
-    [4, 5, 6], 
-    [7, 8, 9] 
-  ]
+  @@board = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] 
 
   def self.play
     display_board()
     select_move()
   end
 
+  def self.verify_selection(input)
+    if (@@board[input - 1] == "X" || @@board[input - 1] == "O")
+      p "That space has already been taken!"
+      display_board()
+      select_move()
+    else
+      @@board[input - 1] = "X"  
+      check_for_winner()
+    end
+  end
+
+  def self.verify_input(input)
+    unless input.between?(1,9)
+      p "Please input a number 1 through 9."
+      select_move()
+    else 
+      verify_selection(input)
+    end
+  end
+
   def self.select_move
     p "Select your move:"
     input = gets.chomp.to_i
-    unless input.between?(1,9)
-      p "please input a number 1 through 9"
-      select_move()
-    else
-      p input  
-    end
+    verify_input(input)
   end
 
   def self.get_player_count
@@ -47,30 +58,35 @@ class Game
   end
 
   def self.display_board
-    p @@board[0]
-    p @@board[1]
-    p @@board[2]
+    p @@board[0..2]
+    p @@board[3..5]
+    p @@board[6..8]
   end
 
   def self.check_for_winner
-    if (board[0][0] == x && board[0][1] == x && [0][2] == x ||
-      board[1][0] == x && board[1][1] == x && [1][2] == x ||
-      board[2][0] == x && board[2][1] == x && [2][2] == x ||
-      board[0][0] == x && board[1][0] == x && [2][0] == x ||
-      board[0][1] == x && board[1][1] == x && [2][1] == x ||
-      board[0][2] == x && board[1][2] == x && [2][2] == x ||
-      board[0][0] == x && board[1][1] == x && [2][2] == x ||
-      board[0][2] == x && board[1][1] == x && [2][0] == x)
+    if (@@board[0] == "X" && @@board[1] == "X" && @@board[2] == "X" ||
+      @@board[3] == "X" && @@board[4] == "X" && @@board[5] == "X" ||
+      @@board[6] == "X" && @@board[7] == "X" && @@board[8] == "X" ||
+      @@board[0] == "X" && @@board[3] == "X" && @@board[6] == "X" ||
+      @@board[1] == "X" && @@board[4] == "X" && @@board[7] == "X" ||
+      @@board[2] == "X" && @@board[5] == "X" && @@board[8] == "X" ||
+      @@board[0] == "X" && @@board[4] == "X" && @@board[8] == "X" ||
+      @@board[2] == "X" && @@board[4] == "X" && @@board[6] == "X")
+      display_board()
       puts 'X wins!'
-    elsif (board[0][0] == o && board[0][1] == o && [0][2] == o ||
-      board[1][0] == o && board[1][1] == o && [1][2] == o ||
-      board[2][0] == o && board[2][1] == o && [2][2] == o ||
-      board[0][0] == o && board[1][0] == o && [2][0] == o ||
-      board[0][1] == o && board[1][1] == o && [2][1] == o ||
-      board[0][2] == o && board[1][2] == o && [2][2] == o ||
-      board[0][0] == o && board[1][1] == o && [2][2] == o ||
-      board[0][2] == o && board[1][1] == o && [2][0] == o)
+    elsif (@@board[0] == "O" && @@board[1] == "O" && @@board[2] == "O" ||
+      @@board[3] == "O" && @@board[4] == "O" && @@board[5] == "O" ||
+      @@board[6] == "O" && @@board[7] == "O" && @@board[8] == "O" ||
+      @@board[0] == "O" && @@board[3] == "O" && @@board[6] == "O" ||
+      @@board[1] == "O" && @@board[4] == "O" && @@board[7] == "O" ||
+      @@board[2] == "O" && @@board[5] == "O" && @@board[8] == "O" ||
+      @@board[0] == "O" && @@board[4] == "O" && @@board[8] == "O" ||
+      @@board[2] == "O" && @@board[4] == "O" && @@board[6] == "O")
+      display_board()
       puts 'O wins!'
+    else
+      display_board()
+      select_move()
     end
   end
 end

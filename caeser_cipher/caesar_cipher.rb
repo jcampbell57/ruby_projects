@@ -5,7 +5,7 @@ def caesar_cipher(string, shift = 5)
   new_string = []
   a = string.split('')
 
-  b = a.each do |letter|
+  a.each do |letter|
     if letter.ord.between?(97, 122)
       if letter.ord + shift > 122
         new_letter = (((letter.ord + shift) % 122) + 97).chr

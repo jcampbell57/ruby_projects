@@ -12,7 +12,7 @@ def stock_picker(array)
   profit = pick[:sell][1] - pick[:buy][1]
 
   array.each_with_index do |price, index|
-    next if index == 0
+    next if index.zero?
 
     next unless (price - pick[:buy][1]) >= profit
 

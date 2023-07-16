@@ -1,20 +1,23 @@
 # tic tac toe game logic
 class Game
-  attr_reader :board, :mode
+  attr_reader :board, :mode, :marker
 
   # initialization methods
 
-  def initialize(board = [1, 2, 3, 4, 5, 6, 7, 8, 9], mode = prompt_mode)
+  def initialize(board = [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                 mode = prompt_mode,
+                 marker = 'X')
     self.board = board
     self.mode = mode
+    self.marker = marker
   end
 
   def prompt_mode
     puts '1 player or 2?'
-    check_mode_input(gets.chomp.to_i)
+    validate_mode_input(gets.chomp.to_i)
   end
 
-  def check_mode_input(input)
+  def validate_mode_input(input)
     if input == 1
       1
     elsif input == 2
@@ -27,7 +30,29 @@ class Game
 
   protected
 
+  attr_writer :board, :mode, :marker
+
   # game methods
+
+  def process_move(input); end
+
+  def prompt_player_move
+    display_board
+    print "#{marker}'s turn! Choose a space on the board: "
+    validate_player_move(gets.chomp.to_i)
+  end
+
+  def validate_player_move(input)
+    if input.match(/[0-9]/)
+      return input unless board[input - 1] == 'X' || board[input - 1] == 'Y'
+
+      puts 'That spot is taken, pick again!'
+      validate_player_move(gets.chomp.to_i)
+    else
+      puts 'You must enter a space number 1-9.'
+      validate_player_move(gets.chomp.to_i)
+    end
+  end
 
   def display_board
     puts board[0..2]
@@ -35,7 +60,9 @@ class Game
     puts board[6..8]
   end
 
-  attr_writer :board, :mode
+  def set_marker
+    self.marker = marker == 'X' ? 'O' : 'X'
+  end
 
   # winner selection methods
 

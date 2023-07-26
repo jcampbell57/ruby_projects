@@ -40,18 +40,6 @@ class LinkedList
     self.size += 1
   end
 
-  # def size
-  #   size
-  # end
-
-  # def head
-  #   head
-  # end
-
-  # def tail
-  #   tail
-  # end
-
   def at(index)
     current = head
     # handle negative
@@ -83,41 +71,85 @@ class LinkedList
     false
   end
 
-  def find(value); end
+  def find(value)
+    current = head
+    size.times do
+      return current if current.value == value
 
-  def to_s; end
+      current = current.next_node
+    end
+    nil
+  end
+
+  def to_s
+    current = head
+    new_string = ''
+    size.times do
+      new_string += "#{current.value}"
+      new_string += ' -> '
+      current = current.next_node.nil? ? nil : current.next_node
+    end
+    new_string += 'nil'
+  end
 
   # extra credit
 
   def insert_at(value, index)
     # handle index 0
     if index.zero?
-      this.head = Node.new(value)
-      self.size += 1
+      prepend(value)
     # if at end, add to tail
-    elsif index == (self.size + 1)
-      this.tail = Node.new(value)
-      self.size += 1
+    elsif index == (self.size)
+      append(value)
     # cancel if out of range
     elsif index > self.size || (index * 1) > self.size
     # do nothing
     # handle new index
     else
-      node = Node.new(value)
-      current = head
-      # handle negative
-      if index.negative?
-        (self.size + index).times { current = current.next_node }
-      else
-        (index - 1).times { current = current.next_node }
-      end
-      node.next_node = current.next_node
-      current.next_node = node
-      self.size += 1
+      insert_node(value, index)
     end
   end
 
-  def remove_at(_index)
+  def insert_node(value, index)
+    node = Node.new(value)
+    current = head
+    # handle negative
+    if index.negative?
+      (self.size + index).times { current = current.next_node }
+    else
+      (index - 1).times { current = current.next_node }
+    end
+    node.next_node = current.next_node
+    current.next_node = node
+    self.size += 1
+  end
+
+  def remove_at(index)
+    # handle index 0
+    if index.zero?
+      self.head = head.next_node
+      self.size -= 1
+    # if at end, change tail
+    elsif index == (self.size - 1)
+      pop
+    # cancel if out of range
+    elsif index > self.size || (index * 1) > self.size
+    # do nothing
+    # handle middle index
+    else
+      remove_node(index)
+    end
+  end
+
+  def remove_node(index)
+    current = head
+    # handle negative
+    if index.negative?
+      (self.size + index).times { current = current.next_node }
+    else
+      (index - 1).times { current = current.next_node }
+    end
+    current.next_node = current.next_node.next_node
     self.size -= 1
   end
 end
@@ -126,12 +158,19 @@ ll = LinkedList.new
 ll.prepend(200)
 ll.prepend(100)
 ll.append(400)
-ll.insert_at(300, 3)
+ll.insert_at(300, 2)
 ll.insert_at(350, -2)
 p ll.pop
 ll.at(3)
-ll.insert_at(400, 5)
-ll.contains?(400)
-ll.contains?(500)
-
+ll.insert_at(400, 4)
+ll.insert_at(50, 0)
+p ll.contains?(400)
+ll.insert_at(500, 100)
+p ll.contains?(500)
+p ll.size
+ll.remove_at(5)
+ll.remove_at(0)
+ll.remove_at(2)
+ll.remove_at(10)
+p ll.to_s
 p ll

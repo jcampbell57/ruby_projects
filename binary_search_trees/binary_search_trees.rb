@@ -4,10 +4,10 @@
 class Node
   include Comparable
 
-  attr_accessor :data :left_children :right_children
+  attr_accessor :data, :left, :right
 
   def initialize(d)
-    self.data = d 
+    self.data = d
     self.left = nil
     self.right = nil
   end
@@ -17,10 +17,24 @@ class Tree
   attr_accessor :root
 
   def initialize(array)
-    self.root = build_tree(array)
+    self.root = build_tree(array.sort.uniq)
+    pretty_print
   end
 
-  def build_tree(array); end
+  def build_tree(array)
+    p array
+    if array.length == 0
+      nil
+    elsif array.length == 1
+      node = Node.new(array[0])
+    else
+      mid = (array.length - 1) / 2
+      node = Node.new(array[mid])
+      node.left = build_tree(array[0..(mid - 1)]) unless mid == 0
+      node.right = build_tree(array[(mid + 1)..-1])
+      node
+    end
+  end
 
   def insert(value); end
 
@@ -52,3 +66,4 @@ class Tree
 end
 
 test_array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
+Tree.new(test_array)

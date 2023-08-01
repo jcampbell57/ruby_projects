@@ -18,11 +18,9 @@ class Tree
 
   def initialize(array)
     self.root = build_tree(array.sort.uniq)
-    pretty_print
   end
 
   def build_tree(array)
-    p array
     if array.length == 0
       nil
     elsif array.length == 1
@@ -36,7 +34,23 @@ class Tree
     end
   end
 
-  def insert(value); end
+  def insert(value)
+    self.root = recursive_insert(root, value)
+  end
+
+  def recursive_insert(root, value)
+    if root.nil?
+      root = Node.new(value)
+    elsif value < root.data
+      root.left = recursive_insert(root.left, value)
+    elsif value > root.data
+      root.right = recursive_insert(root.right, value)
+    else
+      puts 'This is strange'
+      exit
+    end
+    root
+  end
 
   def delete(value); end
 
@@ -66,4 +80,6 @@ class Tree
 end
 
 test_array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
-Tree.new(test_array)
+test_tree = Tree.new(test_array)
+test_tree.insert(660)
+test_tree.pretty_print

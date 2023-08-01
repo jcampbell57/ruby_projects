@@ -42,9 +42,6 @@ class Tree
       root.left = insert(value, root.left)
     elsif value > root.data
       root.right = insert(value, root.right)
-    else
-      puts 'This is strange'
-      exit
     end
     root
   end
@@ -85,7 +82,15 @@ class Tree
     end
   end
 
-  def find(value); end
+  def find(value, root = self.root)
+    if root.data > value
+      find(value, root.left)
+    elsif root.data < value
+      find(value, root.right)
+    else
+      root
+    end
+  end
 
   def level_order(block); end
 
@@ -114,5 +119,6 @@ test_array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 test_tree = Tree.new(test_array)
 test_tree.insert(660)
 test_tree.pretty_print
-test_tree.delete(67)
+test_tree.delete(4)
 test_tree.pretty_print
+p test_tree.find(324)

@@ -6,8 +6,8 @@ class Node
 
   attr_accessor :data, :left, :right
 
-  def initialize(d)
-    self.data = d
+  def initialize(data)
+    self.data = data
     self.left = nil
     self.right = nil
   end
@@ -92,7 +92,17 @@ class Tree
     end
   end
 
-  def level_order(block); end
+  def level_order
+    queue = [root]
+    result = []
+    until queue.empty?
+      current_node = queue.shift
+      block_given? ? yield(current_node) : result << current_node.data
+      queue << current_node.left unless current_node.left.nil?
+      queue << current_node.right unless current_node.right.nil?
+    end
+    result unless block_given?
+  end
 
   def inorder(block); end
 
@@ -119,6 +129,8 @@ test_array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 test_tree = Tree.new(test_array)
 test_tree.insert(660)
 test_tree.pretty_print
+p test_tree.level_order
 test_tree.delete(4)
 test_tree.pretty_print
 p test_tree.find(324)
+p test_tree.level_order

@@ -179,30 +179,51 @@ class Tree
   end
 end
 
-test_array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
+# driver script
+test_array = (Array.new(15) { rand(1..100) })
 test_tree = Tree.new(test_array)
-test_tree.insert(660)
 test_tree.pretty_print
-p test_tree.level_order
-test_tree.delete(4)
-test_tree.pretty_print
-p test_tree.find(324)
+p test_tree.balanced?
 p test_tree.level_order
 p test_tree.preorder
-p test_tree.inorder
 p test_tree.postorder
-p test_tree.height
-p test_tree.depth(test_tree.find(8))
-p test_tree.depth(test_tree.find(67))
-p test_tree.depth(test_tree.find(324))
-p test_tree.depth(test_tree.find(6345))
-p test_tree.depth(test_tree.find(660))
-p test_tree.balanced?
-test_tree.insert(661)
-test_tree.insert(662)
-test_tree.insert(9001)
-p test_tree.balanced?
+p test_tree.inorder
+rand(10..20).times { test_tree.insert(rand(100..1000)) }
 test_tree.pretty_print
-p test_tree.rebalance
 p test_tree.balanced?
+test_tree.rebalance
 test_tree.pretty_print
+p test_tree.balanced?
+p test_tree.level_order
+p test_tree.preorder
+p test_tree.postorder
+p test_tree.inorder
+
+# old tests:
+# test_array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
+# test_tree = Tree.new(test_array)
+# test_tree.insert(660)
+# test_tree.pretty_print
+# p test_tree.level_order
+# test_tree.delete(4)
+# test_tree.pretty_print
+# p test_tree.find(324)
+# p test_tree.level_order
+# p test_tree.preorder
+# p test_tree.inorder
+# p test_tree.postorder
+# p test_tree.height
+# p test_tree.depth(test_tree.find(8))
+# p test_tree.depth(test_tree.find(67))
+# p test_tree.depth(test_tree.find(324))
+# p test_tree.depth(test_tree.find(6345))
+# p test_tree.depth(test_tree.find(660))
+# p test_tree.balanced?
+# test_tree.insert(661)
+# test_tree.insert(662)
+# test_tree.insert(9001)
+# p test_tree.balanced?
+# test_tree.pretty_print
+# p test_tree.rebalance
+# p test_tree.balanced?
+# test_tree.pretty_print

@@ -104,7 +104,19 @@ class Tree
     result unless block_given?
   end
 
-  def inorder; end
+  def inorder
+    queue = [@root.right, @root, @root.left]
+    result = []
+    until queue.empty?
+      node = queue.pop
+      block_given? ? yield(node) : result << node.data
+      next if node == @root
+
+      queue.push(node.right) unless node.right.nil?
+      queue.push(node.left) unless node.left.nil?
+    end
+    result
+  end
 
   def preorder
     queue = [@root]
@@ -118,7 +130,19 @@ class Tree
     result
   end
 
-  def postorder(node); end
+  def postorder
+    queue = [@root, @root.right, @root.left]
+    result = []
+    until queue.empty?
+      node = queue.pop
+      block_given? ? yield(node) : result << node.data
+      next if node == @root
+
+      queue.push(node.right) unless node.right.nil?
+      queue.push(node.left) unless node.left.nil?
+    end
+    result
+  end
 
   def height(node); end
 
@@ -145,3 +169,5 @@ test_tree.pretty_print
 p test_tree.find(324)
 p test_tree.level_order
 p test_tree.preorder
+p test_tree.inorder
+p test_tree.postorder

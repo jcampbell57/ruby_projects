@@ -9,3 +9,6 @@ https://www.geeksforgeeks.org/deletion-in-binary-search-tree/
 https://www.youtube.com/watch?v=86g8jAQug04
 
 https://en.wikipedia.org/wiki/Tree_traversal#Inorder_traversal
+
+needed help with height method:
+ - https://github.com/crespire/ruby_bst/blob/main/tree.rb

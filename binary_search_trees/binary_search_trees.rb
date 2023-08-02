@@ -144,7 +144,12 @@ class Tree
     result
   end
 
-  def height(node); end
+  def height(node = @root, count = -1)
+    return count if node.nil?
+
+    count += 1
+    [height(node.left, count), height(node.right, count)].max
+  end
 
   def depth(node); end
 
@@ -171,3 +176,4 @@ p test_tree.level_order
 p test_tree.preorder
 p test_tree.inorder
 p test_tree.postorder
+p test_tree.height

@@ -164,9 +164,13 @@ class Tree
     count
   end
 
-  def balanced?(tree); end
+  def balanced?(node = @root)
+    node.nil? || (height(node.left) - height(node.right)).abs <= 1
+  end
 
-  def rebalance(tree); end
+  def rebalance
+    @root = build_tree(inorder)
+  end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
@@ -193,3 +197,12 @@ p test_tree.depth(test_tree.find(67))
 p test_tree.depth(test_tree.find(324))
 p test_tree.depth(test_tree.find(6345))
 p test_tree.depth(test_tree.find(660))
+p test_tree.balanced?
+test_tree.insert(661)
+test_tree.insert(662)
+test_tree.insert(9001)
+p test_tree.balanced?
+test_tree.pretty_print
+p test_tree.rebalance
+p test_tree.balanced?
+test_tree.pretty_print

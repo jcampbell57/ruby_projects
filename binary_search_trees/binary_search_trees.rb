@@ -151,7 +151,18 @@ class Tree
     [height(node.left, count), height(node.right, count)].max
   end
 
-  def depth(node); end
+  def depth(node)
+    return nil if node.nil?
+
+    current_node = @root
+    count = 0
+    until current_node == node
+      count += 1
+      current_node = current_node.left if node.data < current_node.data
+      current_node = current_node.right if node.data > current_node.data
+    end
+    count
+  end
 
   def balanced?(tree); end
 
@@ -177,3 +188,8 @@ p test_tree.preorder
 p test_tree.inorder
 p test_tree.postorder
 p test_tree.height
+p test_tree.depth(test_tree.find(8))
+p test_tree.depth(test_tree.find(67))
+p test_tree.depth(test_tree.find(324))
+p test_tree.depth(test_tree.find(6345))
+p test_tree.depth(test_tree.find(660))

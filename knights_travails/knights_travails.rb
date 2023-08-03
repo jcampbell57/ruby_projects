@@ -2,17 +2,18 @@
 
 # knight class
 class Knight
-  attr_accessor :board
+  attr_accessor :board, :adjacency_list
 
   def initialize
     self.board = build_board
+    self.adjacency_list = build_adjacency_list
   end
 
   def build_board
     board = []
     8.times do |i|
       8.times do |j|
-        board.push([i + 1, j + 1])
+        board.push([i, j])
       end
     end
     board
@@ -29,14 +30,12 @@ class Knight
                      [square[0] - 1, square[1] - 2]]
     confirmed = []
     possibilities.each do |possibility|
-      p possibility
-      p @board.include?(possibility)
       @board.include?(possibility) ? confirmed << possibility : next
     end
     confirmed
   end
 
-  def adjacency_list
+  def build_adjacency_list
     adjacency_list = {}
     @board.each_with_index do |square, index|
       adjacency_list[index] = []
@@ -45,14 +44,41 @@ class Knight
     adjacency_list
   end
 
-  def knight_moves(start_position, _end_position)
-    # create graph
-    queue = [start_position]
-    count = 0
-    square = queue.pop until queue.empty?
+  def find_shortest(solutions_array)
+    solution_counts = []
+    solutions_array.each do |solution|
+      solution_counts << solution.size
+    end
+    shortest = solution_counts.min
+    shortest_index = solution_counts.find_index(shortest)
+    solutions_array[shortest_index]
+  end
+
+  def find_path(start_position, end_position, path_array)
+    path_array << start_position
+    position_index = @board.find_index(start_position)
+    possible_moves = @adjacency_list[position_index].difference(path_array)
+    return path_array << end_position if possible_moves.include?(end_position)
+
+    possible_moves.each { |move| find_path(move, end_position, path_array) }
+  end
+
+  def knight_moves(start_position, end_position)
+    position_index = @board.find_index(start_position)
+    possible_moves = @adjacency_list[position_index]
+    solutions_array = []
+    possible_moves.each do |move|
+      solutions_array << find_path(move, end_position, [start_position])
+    end
+    shortest_path = find_shortest(solutions_array)
+    puts "The shortest path is #{shortest_path.size - 1} moves: "
+    p shortest_path
   end
 end
 
 test = Knight.new
-p test.build_board
-p test.adjacency_list
+
+test.knight_moves([0, 0], [1, 2])
+test.knight_moves([0, 0], [3, 3])
+test.knight_moves([3, 3], [0, 0])
+test.knight_moves([3, 3], [4, 3])

@@ -54,25 +54,29 @@ class Knight
     solutions_array[shortest_index]
   end
 
-  def find_path(start_position, end_position, path_array)
+  def find_path(start_position, end_position, path_array = [])
     path_array << start_position
     position_index = @board.find_index(start_position)
     possible_moves = @adjacency_list[position_index].difference(path_array)
+
+    return nil if possible_moves.empty?
     return path_array << end_position if possible_moves.include?(end_position)
 
-    possible_moves.each { |move| find_path(move, end_position, path_array) }
+    # this is the problem:
+    solutions_array = []
+    possible_moves.each do |move|
+      next_move = find_path(move, end_position, path_array)
+      solutions_array << next_move unless next_move.nil?
+    end
+    return nil if solutions_array.empty? || solutions_array[-1].nil?
+
+    find_shortest(solutions_array)
   end
 
   def knight_moves(start_position, end_position)
-    position_index = @board.find_index(start_position)
-    possible_moves = @adjacency_list[position_index]
-    solutions_array = []
-    possible_moves.each do |move|
-      solutions_array << find_path(move, end_position, [start_position])
-    end
-    shortest_path = find_shortest(solutions_array)
+    shortest_path = find_path(start_position, end_position)
     puts "The shortest path is #{shortest_path.size - 1} moves: "
-    p shortest_path
+    shortest_path.each { |move| p move }
   end
 end
 

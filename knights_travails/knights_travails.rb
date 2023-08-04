@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-# knight class
-class Knight
-  attr_accessor :board, :adjacency_list
+# board class
+class Board
+  attr_accessor :sqauares, :adjacency_list
 
   def initialize
-    self.board = build_board
+    self.sqauares = build_board
     self.adjacency_list = build_adjacency_list
   end
 
@@ -30,59 +30,56 @@ class Knight
                      [square[0] - 1, square[1] - 2]]
     confirmed = []
     possibilities.each do |possibility|
-      @board.include?(possibility) ? confirmed << possibility : next
+      @sqauares.include?(possibility) ? confirmed << possibility : next
     end
     confirmed
   end
 
   def build_adjacency_list
     adjacency_list = {}
-    @board.each_with_index do |square, index|
+    @sqauares.each_with_index do |square, index|
       adjacency_list[index] = []
       adjacency_list[index] = possible_moves(square)
     end
     adjacency_list
   end
+end
 
-  def find_shortest(solutions_array)
-    solution_counts = []
-    solutions_array.each do |solution|
-      solution_counts << solution.size
-    end
-    shortest = solution_counts.min
-    shortest_index = solution_counts.find_index(shortest)
-    solutions_array[shortest_index]
-  end
+# knight class
+class Knight
+  attr_accessor :position, :parent, :children
 
-  def find_path(start_position, end_position, path_array = [])
-    path_array << start_position
-    position_index = @board.find_index(start_position)
-    possible_moves = @adjacency_list[position_index].difference(path_array)
+  @@history = []
 
-    return nil if possible_moves.empty?
-    return path_array << end_position if possible_moves.include?(end_position)
-
-    # this is the problem:
-    solutions_array = []
-    possible_moves.each do |move|
-      next_move = find_path(move, end_position, path_array)
-      solutions_array << next_move unless next_move.nil?
-    end
-    return nil if solutions_array.empty? || solutions_array[-1].nil?
-
-    find_shortest(solutions_array)
-  end
-
-  def knight_moves(start_position, end_position)
-    shortest_path = find_path(start_position, end_position)
-    puts "The shortest path is #{shortest_path.size - 1} moves: "
-    shortest_path.each { |move| p move }
+  def initialize(position, parent, board = Board.new)
+    # reset history when given new move
+    @@history = [] if parent.nil?
+    @@history.push(position)
+    self.position = position
+    self.parent = parent
+    self.children = board.adjacency_list[board.sqauares.find_index(position)].difference(@@history)
   end
 end
 
-test = Knight.new
+def knight_moves(start_position, end_position, board = Board.new)
+  queue = []
+  current_node = Knight.new(start_position, nil, board)
+  until current_node.position == end_position
+    current_node.children.each { |move| queue << Knight.new(move, current_node, board) }
+    break if queue.empty?
 
-test.knight_moves([0, 0], [1, 2])
-test.knight_moves([0, 0], [3, 3])
-test.knight_moves([3, 3], [0, 0])
-test.knight_moves([3, 3], [4, 3])
+    current_node = queue.shift
+  end
+  shortest_path = []
+  until current_node.nil?
+    shortest_path.unshift(current_node.position)
+    current_node = current_node.parent
+  end
+  puts "The shortest path from #{start_position} to #{end_position} is #{shortest_path.size - 1} moves: "
+  shortest_path.each { |move| puts "#{move}" }
+end
+
+knight_moves([0, 0], [1, 2])
+knight_moves([0, 0], [3, 3])
+knight_moves([3, 3], [0, 0])
+knight_moves([3, 3], [4, 3])

@@ -4,8 +4,6 @@
 require './lib/tictactoe_v2'
 
 describe Game do
-  # Cant seem to get initialize method to stop calling prompt_mode
-  # subject(:game) { described_class.new }
   subject(:game) do
     described_class.new(%w[1 2 3 4 5 6 7 8 9],
                         [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -71,7 +69,7 @@ describe Game do
         game.validate_mode_input(invalid_number)
       end
 
-      # I'm not actually sure what this is doing
+      # I'm not actually sure exactly how this works
       it 'calls itself three times (once for the correct input)' do
         invalid_number = 4
         expect(game).to receive(:validate_mode_input).exactly(3).times.and_call_original

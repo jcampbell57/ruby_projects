@@ -12,6 +12,7 @@ class Game
     self.computer_options = computer_options
     self.mode = mode
     self.marker = marker
+    # prompt_player_move
   end
 
   def prompt_player_move
@@ -62,11 +63,10 @@ class Game
       return input unless board[input - 1] == 'X' || board[input - 1] == 'Y'
 
       puts 'That spot is taken, pick again!'
-      validate_player_move(gets.chomp.to_i)
     else
       puts 'You must enter a space number 1-9.'
-      validate_player_move(gets.chomp.to_i)
     end
+    validate_player_move(gets.chomp.to_i)
   end
 
   def display_board
@@ -109,4 +109,4 @@ class Game
   end
 end
 
-# Game.new.prompt_player_move
+# Game.new

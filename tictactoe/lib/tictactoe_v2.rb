@@ -1,6 +1,6 @@
 # tic tac toe game logic
 class Game
-  attr_reader :board, :mode, :marker
+  attr_accessor :board, :mode, :marker, :computer_options
 
   # initialization methods
 
@@ -12,13 +12,15 @@ class Game
     self.computer_options = computer_options
     self.mode = mode
     self.marker = marker
-    prompt_player_move
   end
 
-  protected
+  def prompt_player_move
+    display_board
+    print "#{marker}'s turn! Choose a space on the board: "
+    process_move(validate_player_move(gets.chomp.to_i))
+  end
 
-  attr_writer :board, :mode, :marker
-  attr_accessor :computer_options
+  # protected
 
   def prompt_mode
     puts '1 player or 2?'
@@ -37,12 +39,6 @@ class Game
   end
 
   # game methods
-
-  def prompt_player_move
-    display_board
-    print "#{marker}'s turn! Choose a space on the board: "
-    process_move(validate_player_move(gets.chomp.to_i))
-  end
 
   def process_move(input)
     board[input - 1] = marker
@@ -113,4 +109,4 @@ class Game
   end
 end
 
-Game.new
+# Game.new.prompt_player_move

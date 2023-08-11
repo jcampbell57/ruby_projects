@@ -163,8 +163,21 @@ describe Game do
   end
 
   describe '#computer_move' do
-    xit '' do
-      expect
+    let(:computer_choice) { 5 } # Choose a specific computer choice for testing
+
+    before do
+      allow(game).to receive(:computer_options).and_return([computer_choice])
+      allow(game).to receive(:process_move)
+      allow(game).to receive(:sleep)
+    end
+
+    it 'prints the computer choice' do
+      expect { game.computer_move }.to output(/Computer chooses... #{computer_choice}/).to_stdout
+    end
+
+    it 'calls process_move with the computer choice' do
+      expect(game).to receive(:process_move).with(computer_choice)
+      game.computer_move
     end
   end
 

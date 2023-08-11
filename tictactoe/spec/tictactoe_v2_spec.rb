@@ -221,14 +221,28 @@ describe Game do
   end
 
   describe '#display_board' do
-    xit '' do
-      expect
-    end
+    # no test needed
   end
 
   describe '#set_marker' do
-    xit '' do
-      expect
+    context "When marker is 'O'" do
+      before do
+      end
+
+      it "changes to 'X'" do
+        # game.marker = 'O'
+        expect { game.set_marker }.to change { game.marker }.from('O').to('X')
+      end
+    end
+
+    context "When marker is 'X'" do
+      before do
+      end
+
+      it "changes to 'O'" do
+        # game.marker = 'X'
+        expect { game.set_marker }.to change { game.marker }.from('X').to('O')
+      end
     end
   end
 

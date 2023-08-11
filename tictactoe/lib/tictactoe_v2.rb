@@ -44,7 +44,8 @@ class Game
   def process_move(input)
     board[input - 1] = marker
     set_marker
-    Game.new if winner_declared?
+    return Game.new.prompt_player_move if winner_declared?
+
     computer_options.delete(input)
     computer_move if mode == 1 && marker == 'O'
     prompt_player_move

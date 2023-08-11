@@ -15,6 +15,10 @@ describe Game do
     # no test needed?
   end
 
+  describe '#prompt_player_move' do
+    # no test needed?
+  end
+
   describe '#prompt_mode' do
     # no test needed?
   end
@@ -84,42 +88,125 @@ describe Game do
     end
   end
 
-  describe '#prompt_player_move' do
-    # no test needed?
-  end
-
   describe '#process_move' do
-    xit '' do
+    context 'when called' do
+      before do
+        allow(game).to receive(:computer_move)
+        allow(game).to receive(:prompt_player_move)
+      end
+
+      it 'places marker on board' do
+        valid_input = 5
+        expect { game.process_move(valid_input) }.to change { game.board[valid_input - 1] }.to(game.marker)
+      end
+
+      it 'switches marker' do
+        valid_input = 5
+        original_marker = game.marker
+        game.process_move(valid_input)
+        expect(game.marker).not_to eq(original_marker)
+      end
+    end
+    context 'when winner_declared?' do
+      before do
+        # allow(game).to receive(:computer_move)
+        # allow(game).to receive(:prompt_player_move)
+        allow(game).to receive(:winner_declared?).and_return(true)
+        allow(Game).to receive(:new).and_return(game) # Stub Game.new to return the same game instance
+      end
+
+      it 'calls Game.new.prompt_player_move' do
+        valid_input = 5
+        expect(game).to receive(:prompt_player_move).once
+        # expect(game).to receive(:computer_move).twice
+        game.process_move(valid_input)
+      end
+    end
+    context 'when game is not over' do
+      before do
+        allow(game).to receive(:computer_move)
+        allow(game).to receive(:prompt_player_move)
+      end
+
+      it 'removes input from computer options' do
+        valid_input = 5
+        expect { game.process_move(valid_input) }.to change {
+                                                       game.computer_options
+                                                     }.to(game.computer_options - [valid_input])
+        game.process_move(valid_input)
+      end
+    end
+    context "when it is the computer's turn" do
+      before do
+        allow(game).to receive(:computer_move)
+        allow(game).to receive(:prompt_player_move)
+      end
+
+      it 'calls computer_move' do
+        valid_input = 5
+        expect(game).to receive(:computer_move)
+        game.process_move(valid_input)
+      end
+    end
+    context "when it is not the computer's turn" do
+      before do
+        allow(game).to receive(:prompt_player_move)
+        game.mode = 2
+      end
+
+      it 'calls prompt_player_move' do
+        valid_input = 5
+        expect(game).to receive(:prompt_player_move)
+        game.process_move(valid_input)
+      end
     end
   end
 
   describe '#computer_move' do
     xit '' do
+      expect
     end
   end
 
   describe '#validate_player_move' do
-    xit '' do
+    context 'when given a valid input' do
+      xit 'returns input if space not taken' do
+        expect
+      end
+
+      xit 'calls itself with gets if space already taken' do
+        expect
+      end
+    end
+
+    context 'when given an invalid input' do
+      xit 'calls itself with gets' do
+        expect
+      end
     end
   end
 
   describe '#display_board' do
     xit '' do
+      expect
     end
   end
 
   describe '#set_marker' do
     xit '' do
+      expect
     end
   end
 
   describe '#winner_declared?' do
     xit '' do
+      expect
     end
   end
 
   describe '#winner?' do
     xit '' do
+      expect
     end
   end
 end

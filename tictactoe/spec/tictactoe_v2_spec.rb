@@ -241,27 +241,40 @@ describe Game do
   end
 
   describe '#winner_declared?' do
+    before do
+      allow(game).to receive(:display_board)
+    end
     context "when 'X' wins" do
-      xit '' do
-        expect
+      it "display board, puts 'X wins!' and returns true" do
+        game.board = %w[1 2 3 X X X 7 8 9]
+        expect { game.winner_declared? }.to output("X wins!\n").to_stdout
+        expect(game).to receive(:display_board).once
+        expect(game.winner_declared?).to be(true)
       end
     end
 
     context "when 'O' wins" do
-      xit '' do
-        expect
+      it "puts 'O wins!' and returns true" do
+        game.board = %w[1 2 3 O O O 7 8 9]
+        expect { game.winner_declared? }.to output("O wins!\n").to_stdout
+        expect(game).to receive(:display_board).once
+        expect(game.winner_declared?).to be(true)
       end
     end
 
     context 'when its a tie' do
-      xit '' do
-        expect
+      it "puts It's a tie!' and returns true" do
+        game.board = %w[X X O O O X X O X]
+        expect { game.winner_declared? }.to output("It's a tie!\n").to_stdout
+        expect(game).to receive(:display_board).once
+        expect(game.winner_declared?).to be(true)
       end
     end
 
-    context 'when no one wins' do
-      xit '' do
-        expect
+    context 'when game is not over' do
+      it 'returns false' do
+        game.board = %w[1 2 3 X O X 7 8 9]
+        expect(game.winner_declared?).to be(false)
       end
     end
   end

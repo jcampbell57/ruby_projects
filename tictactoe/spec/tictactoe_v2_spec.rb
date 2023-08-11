@@ -225,36 +225,205 @@ describe Game do
   end
 
   describe '#set_marker' do
-    context "When marker is 'O'" do
-      before do
-      end
-
+    context "When checking 'O'" do
       it "changes to 'X'" do
-        # game.marker = 'O'
+        game.marker = 'O'
         expect { game.set_marker }.to change { game.marker }.from('O').to('X')
       end
     end
 
-    context "When marker is 'X'" do
-      before do
-      end
-
+    context "When checking 'X'" do
       it "changes to 'O'" do
-        # game.marker = 'X'
+        game.marker = 'X'
         expect { game.set_marker }.to change { game.marker }.from('X').to('O')
       end
     end
   end
 
   describe '#winner_declared?' do
-    xit '' do
-      expect
+    context "when 'X' wins" do
+      xit '' do
+        expect
+      end
+    end
+
+    context "when 'O' wins" do
+      xit '' do
+        expect
+      end
+    end
+
+    context 'when its a tie' do
+      xit '' do
+        expect
+      end
+    end
+
+    context 'when no one wins' do
+      xit '' do
+        expect
+      end
     end
   end
 
   describe '#winner?' do
-    xit '' do
-      expect
+    context 'winning game' do
+      before do
+        game.board = %w[X X X X X X X X X]
+      end
+      context 'winning marker' do
+        context 'when checking in spots [0, 1, 2]' do
+          it 'returns true' do
+            expect(game.winner?([0, 1, 2], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [3, 4, 5]' do
+          it 'returns true' do
+            expect(game.winner?([3, 4, 5], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [6, 7, 8]' do
+          it 'returns true' do
+            expect(game.winner?([6, 7, 8], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [0, 3, 6]' do
+          it 'returns true' do
+            expect(game.winner?([0, 3, 6], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [1, 4, 7]' do
+          it 'returns true' do
+            expect(game.winner?([1, 4, 7], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [2, 5, 8]' do
+          it 'returns true' do
+            expect(game.winner?([2, 5, 8], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [0, 4, 8]' do
+          it 'returns true' do
+            expect(game.winner?([0, 4, 8], 'X')).to be(true)
+          end
+        end
+
+        context 'when checking in spots [2, 4, 6]' do
+          it 'returns true' do
+            expect(game.winner?([2, 4, 6], 'X')).to be(true)
+          end
+        end
+      end
+
+      context 'losing marker' do
+        context 'when checking in spots [0, 1, 2]' do
+          it 'returns false' do
+            expect(game.winner?([0, 1, 2], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [3, 4, 5]' do
+          it 'returns false' do
+            expect(game.winner?([3, 4, 5], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [6, 7, 8]' do
+          it 'returns false' do
+            expect(game.winner?([6, 7, 8], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [0, 3, 6]' do
+          it 'returns false' do
+            expect(game.winner?([0, 3, 6], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [1, 4, 7]' do
+          it 'returns false' do
+            expect(game.winner?([1, 4, 7], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [2, 5, 8]' do
+          it 'returns false' do
+            expect(game.winner?([2, 5, 8], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [0, 4, 8]' do
+          it 'returns false' do
+            expect(game.winner?([0, 4, 8], 'O')).to be(false)
+          end
+        end
+
+        context 'when checking in spots [2, 4, 6]' do
+          it 'returns false' do
+            expect(game.winner?([2, 4, 6], 'O')).to be(false)
+          end
+        end
+      end
+    end
+
+    context 'losing game' do
+      before do
+        game.board = %w[b r a n d i r o x]
+      end
+
+      context 'when checking in spots [0, 1, 2]' do
+        it 'returns false' do
+          expect(game.winner?([0, 1, 2], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [3, 4, 5]' do
+        it 'returns false' do
+          expect(game.winner?([3, 4, 5], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [6, 7, 8]' do
+        it 'returns false' do
+          expect(game.winner?([6, 7, 8], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [0, 3, 6]' do
+        it 'returns false' do
+          expect(game.winner?([0, 3, 6], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [1, 4, 7]' do
+        it 'returns false' do
+          expect(game.winner?([1, 4, 7], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [2, 5, 8]' do
+        it 'returns false' do
+          expect(game.winner?([2, 5, 8], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [0, 4, 8]' do
+        it 'returns false' do
+          expect(game.winner?([0, 4, 8], 'O')).to be(false)
+        end
+      end
+
+      context 'when checking in spots [2, 4, 6]' do
+        it 'returns false' do
+          expect(game.winner?([2, 4, 6], 'O')).to be(false)
+        end
+      end
     end
   end
 end

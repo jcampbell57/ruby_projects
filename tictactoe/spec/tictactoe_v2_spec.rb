@@ -183,18 +183,39 @@ describe Game do
 
   describe '#validate_player_move' do
     context 'when given a valid input' do
-      xit 'returns input if space not taken' do
-        expect
+      context 'when space not taken' do
+        it 'returns input' do
+          valid_input = 5
+          result = game.validate_player_move(valid_input)
+          expect(result).to eq(valid_input)
+        end
       end
 
-      xit 'calls itself with gets if space already taken' do
-        expect
+      context 'when space taken' do
+        before do
+          game.board[4] = 'X'
+          allow(game).to receive(:gets).and_return('4')
+        end
+
+        it 'prompts for a new input' do
+          valid_input = 5
+          expect { game.validate_player_move(valid_input) }.to output("That spot is taken, pick again!\n").to_stdout
+          expect(game).to receive(:gets).and_return('4')
+          expect(game.validate_player_move(valid_input)).to eq(4)
+        end
       end
     end
 
     context 'when given an invalid input' do
-      xit 'calls itself with gets' do
-        expect
+      before do
+        allow(game).to receive(:gets).and_return('4')
+      end
+
+      it 'prompts for a new input' do
+        invalid_input = 'b'
+        expect { game.validate_player_move(invalid_input) }.to output("You must enter a space number 1-9.\n").to_stdout
+        expect(game).to receive(:gets).and_return('4')
+        expect(game.validate_player_move(invalid_input)).to eq(4)
       end
     end
   end

@@ -2,7 +2,44 @@
 
 # Game class
 class Game
-  def initialize
-    self.
+  attr_accessor :mode
+
+  def initialize(mode = nil)
+    self.mode = mode
   end
+
+  def play
+    self.mode = select_mode
+  end
+
+  def select_mode
+    print 'Input 1 for single player or 2 for multiplayer: '
+    verify_mode(gets.chomp.to_i)
+  end
+
+  def verify_mode(input)
+    return input if input.to_s.match(/[1-9]/) && input.to_s.size == 1
+
+    # else
+    puts 'Invalid input!'
+    select_mode
+  end
+
+  def game_loop; end
+
+  def display_board; end
+
+  def select_move; end
+
+  def verify_move(input); end
+
+  def game_over?; end
+
+  def end_game; end
+
+  def display_result; end
+
+  def prompt_new_game; end
+
+  def verify_new_game_input(input); end
 end

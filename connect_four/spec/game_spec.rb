@@ -36,10 +36,10 @@ describe Game do
       allow(game).to receive(:gets).and_return(mode_selection.to_s)
     end
 
-    xit 'prompts player for mode' do
+    it 'prompts player for mode' do
       expect(game).to receive(:print).with('Input 1 for single player or 2 for multiplayer: ').once
       game.select_mode
-      expect(game.mode).to_be(mode_selection)
+      expect(game.mode).to be(mode_selection)
     end
   end
 
@@ -66,7 +66,7 @@ describe Game do
         expect(game).to receive(:select_mode).once
         expect(game).to receive(:gets).and_return(valid_input)
         game.verify_mode(invalid_input)
-        expect(game.mode).to_be(valid_input)
+        expect(game.mode).to be(valid_input)
       end
     end
   end

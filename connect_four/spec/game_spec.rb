@@ -22,25 +22,7 @@ describe Game do
       expect(game.mode).to be(single_player_mode)
     end
 
-    context 'when single player mode' do
-      xit 'sets player marker' do
-        marker = 'b'
-        expect(game.play).to change(game.player_marker).to be(marker)
-        game.play
-      end
-    end
-
-    context 'when two player mode' do
-      xit 'sets player markers' do
-        marker_one = 'b'
-        marker_two = 'j'
-        expect(game.play).to change(game.player_marker).to be(marker_one)
-        expect(game.play).to change(game.second_marker).to be(marker_two)
-        game.play
-      end
-    end
-
-    xit 'starts game_loop' do
+    it 'starts game_loop' do
       expect(game).to receive(:game_loop).once
       game.play
     end

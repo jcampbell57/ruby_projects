@@ -2,14 +2,21 @@
 
 # Game class
 class Game
-  attr_accessor :mode
+  attr_accessor :mode, :player_marker, :second_marker
+
+  require_relative 'markers'
+
+  include Markers
 
   def initialize(mode = nil)
     self.mode = mode
+    self.player_marker = green_circle
+    self.second_marker = pink_circle
   end
 
   def play
     self.mode = select_mode
+    game_loop
   end
 
   def select_mode

@@ -304,15 +304,20 @@ describe Game do
     end
   end
 
-  describe '#end_game' do
-    before do
-      allow(game).to receive(:display_result)
-      allow(game).to receive(:prompt_new_game)
-    end
+  # describe '#end_game' do
+  #   # xit 'displays result' do
+  #   #   # no test needed
+  #   # end
 
-    # xit 'displays result' do
-    #   # no test needed
-    # end
+  #   # it 'prompts new game' do
+  #   #   # no test needed
+  #   # end
+  # end
+
+  describe '#display_result' do
+    before do
+      allow(game).to receive(:display_board)
+    end
 
     context 'player wins single player' do
       before do
@@ -322,7 +327,7 @@ describe Game do
 
       it 'declares player winner' do
         expect(game).to receive(:puts).with('You win!')
-        game.end_game
+        game.display_result
       end
     end
 
@@ -334,7 +339,7 @@ describe Game do
 
       it 'wishes better luck next time' do
         expect(game).to receive(:puts).with('Better luck next time!')
-        game.end_game
+        game.display_result
       end
     end
 
@@ -346,7 +351,7 @@ describe Game do
 
       it 'declares player winner' do
         expect(game).to receive(:puts).with('Player one wins!')
-        game.end_game
+        game.display_result
       end
     end
 
@@ -358,20 +363,10 @@ describe Game do
 
       it 'declares second player winner' do
         expect(game).to receive(:puts).with('Player two wins!')
-        game.end_game
+        game.display_result
       end
     end
-
-    # it 'prompts new game' do
-    #   # no test needed
-    # end
   end
-
-  # describe '#display_result' do
-  #   xit 'displays result' do
-  #     # no test needed
-  #   end
-  # end
 
   describe '#prompt_new_game' do
     before do

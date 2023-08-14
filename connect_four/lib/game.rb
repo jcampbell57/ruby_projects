@@ -95,9 +95,28 @@ class Game
     false
   end
 
-  def horizontal_win?; end
+  def horizontal_win?
+    @board.each do |row|
+      row.each_with_index do |mark, column_index|
+        if mark == player_marker &&
+           row[column_index + 1] == player_marker &&
+           row[column_index + 2] == player_marker &&
+           row[column_index + 3] == player_marker
+          return true
+        elsif mark == second_marker &&
+              row[column_index + 1] == second_marker &&
+              row[column_index + 2] == second_marker &&
+              row[column_index + 3] == second_marker
+          return true
+        end
+      end
+    end
+    false
+  end
 
-  def diagonal_win?; end
+  def diagonal_win?
+    false
+  end
 
   def end_game; end
 

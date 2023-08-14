@@ -118,8 +118,8 @@ describe Game do
     context 'when given valid input' do
       it 'returns input' do
         valid_input = 4
-        expect(game.verify_move(valid_input)).to_return(valid_input.to_s)
-        game.verify_move
+        expect(game.verify_move(valid_input)).to be(valid_input)
+        game.verify_move(valid_input)
       end
     end
 
@@ -128,10 +128,9 @@ describe Game do
         valid_input = 4
         invalid_input = 'b'
         expect(game).to receive(:puts).with('Invalid input!').once
-        expect(game).to receive(:select_move).once
+        expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
         expect(game).to receive(:gets).and_return(valid_input.to_s)
-        game.verify_move(invalid_input)
-        expect(game.verify_move).to_return(valid_input)
+        expect(game.verify_move(invalid_input.chomp.to_i)).to be(valid_input)
       end
     end
   end
@@ -150,15 +149,15 @@ describe Game do
         ]
       end
 
-      xit 'returns true' do
-        expect(game.game_over?).to_return(true)
+      it 'returns true' do
+        expect(game.game_over?).to be(true)
         game.game_over?
       end
     end
 
     context 'when game is not over' do
-      xit 'returns false' do
-        expect(game.game_over?).to_return(false)
+      it 'returns false' do
+        expect(game.game_over?).to be(false)
         game.game_over?
       end
     end
@@ -236,7 +235,7 @@ describe Game do
     context 'when given valid input (lowercase)' do
       xit 'returns input' do
         valid_input = 'n'
-        expect(game.verify_new_game_input(valid_input)).to_return(valid_input)
+        expect(game.verify_new_game_input(valid_input)).to be(valid_input)
         game.verify_new_game_input(valid_input)
       end
     end
@@ -244,7 +243,7 @@ describe Game do
     context 'when given valid input (uppercase)' do
       xit 'returns input' do
         valid_input = 'N'
-        expect(game.verify_new_game_input(valid_input)).to_return(valid_input)
+        expect(game.verify_new_game_input(valid_input)).to be(valid_input)
         game.verify_new_game_input(valid_input)
       end
     end

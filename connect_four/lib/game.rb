@@ -32,7 +32,13 @@ class Game
     select_mode
   end
 
-  def game_loop; end
+  def game_loop
+    until game_over? == true
+      display_board
+      select_move
+    end
+    end_game
+  end
 
   def display_board; end
 

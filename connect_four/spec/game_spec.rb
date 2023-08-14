@@ -114,15 +114,6 @@ describe Game do
   #   end
   # end
 
-  # describe '#display_row' do
-  #   context 'when given row index' do
-  #     it 'returns row as array' do
-  #       empty_circle = "\u25cb"
-  #       expect(game.display_row(5)).to eql(Array.new(7, empty_circle))
-  #     end
-  #   end
-  # end
-
   describe '#select_move' do
     it 'prompts player for move' do
       valid_input = 4
@@ -287,7 +278,7 @@ describe Game do
 
     context 'when there are 4 diagonally matching second markers' do
       before do
-        @board = [
+        game.board = [
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, second_marker, empty_marker],
           [empty_marker, empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker],
@@ -318,45 +309,81 @@ describe Game do
     #   # no test needed
     # end
 
-    context 'player wins' do
+    context 'player wins single player' do
       before do
-        game.player_markerer = 'b'
         game.board = [
-          [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-          [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['b', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['b', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['b', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['b', ' ', ' ', ' ', ' ', ' ', ' ']
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
         ]
       end
 
-      xit 'declares player winner' do
-        expect(game).to receive(:puts).with("'#{game.player_markerer}' wins!")
+      it 'declares player winner' do
+        expect(game).to receive(:puts).with('You win!')
+        game.end_game
       end
     end
 
-    context 'second_player wins' do
+    context 'player loses single player' do
       before do
-        game.second_markerer = 'j'
         game.board = [
-          [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-          [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['j', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['j', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['j', ' ', ' ', ' ', ' ', ' ', ' '],
-          ['j', ' ', ' ', ' ', ' ', ' ', ' ']
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
         ]
       end
 
-      xit 'declares player winner' do
-        expect(game).to receive(:puts).with("'#{game.second_markerer}' wins!")
+      it 'wishes better luck next time' do
+        expect(game).to receive(:puts).with('Better luck next time!')
+        game.end_game
       end
     end
 
-    xit 'prompts new game' do
-      # no test needed
+    context 'player wins multiplayer' do
+      before do
+        game.board = [
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
+        ]
+      end
+
+      it 'declares player winner' do
+        expect(game).to receive(:puts).with('Player one wins!')
+        game.end_game
+      end
     end
+
+    context 'second_player wins multiplayer' do
+      before do
+        game.board = [
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
+        ]
+      end
+
+      it 'declares second player winner' do
+        expect(game).to receive(:puts).with("'Player two wins!")
+        game.end_game
+      end
+    end
+
+    # it 'prompts new game' do
+    #   # no test needed
+    # end
   end
 
   # describe '#display_result' do

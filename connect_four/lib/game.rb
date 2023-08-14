@@ -2,7 +2,7 @@
 
 # Game class
 class Game
-  attr_accessor :board, :mode, :player_marker, :second_marker
+  attr_accessor :board, :mode
 
   require_relative 'markers'
 
@@ -11,8 +11,6 @@ class Game
   def initialize(board = create_board, mode = nil)
     self.board = board
     self.mode = mode
-    self.player_marker = player_mark
-    self.second_marker = second_mark
   end
 
   def play
@@ -42,7 +40,7 @@ class Game
   end
 
   def create_board
-    Array.new(6, Array.new(7, empty_mark))
+    Array.new(6, Array.new(7, empty_marker))
   end
 
   def display_board
@@ -78,7 +76,24 @@ class Game
     false
   end
 
-  def vertical_win?; end
+  def vertical_win?
+    @board.each_with_index do |row, row_index|
+      row.each_with_index do |mark, column_index|
+        if mark == player_marker &&
+           @board[row_index + 1][column_index] == player_marker &&
+           @board[row_index + 2][column_index] == player_marker &&
+           @board[row_index + 3][column_index] == player_marker
+          return true
+        elsif mark == second_marker &&
+              @board[row_index + 1][column_index] == second_marker &&
+              @board[row_index + 2][column_index] == second_marker &&
+              @board[row_index + 3][column_index] == second_marker
+          return true
+        end
+      end
+    end
+    false
+  end
 
   def horizontal_win?; end
 

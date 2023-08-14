@@ -2,13 +2,14 @@
 
 # Game class
 class Game
-  attr_accessor :mode, :player_marker, :second_marker
+  attr_accessor :board, :mode, :player_marker, :second_marker
 
   require_relative 'markers'
 
   include Markers
 
-  def initialize(mode = nil)
+  def initialize(board = create_board, mode = nil)
+    self.board = board
     self.mode = mode
     self.player_marker = green_circle
     self.second_marker = pink_circle
@@ -25,7 +26,7 @@ class Game
   end
 
   def verify_mode(input)
-    return input if input.to_s.match(/[1-9]/) && input.to_s.size == 1
+    return input if input.to_s.match(/[1-2]/) && input.to_s.size == 1
 
     # else
     puts 'Invalid input!'
@@ -40,7 +41,24 @@ class Game
     end_game
   end
 
-  def display_board; end
+  def create_board
+    Array.new(7, Array.new(6, empty_circle))
+  end
+
+  def display_board
+    6.times do |i|
+      puts display_row(5 - i)
+    end
+    puts '1 2 3 4 5 6 7'
+  end
+
+  def display_row(row_index)
+    current_row = []
+    @board.each do |column|
+      current_row << column[row_index]
+    end
+    current_row
+  end
 
   def select_move
     print 'Input the culumn you would like to drop your marker 1-7: '

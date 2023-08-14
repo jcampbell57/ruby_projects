@@ -47,7 +47,12 @@ class Game
     verify_move(gets.chomp.to_i)
   end
 
-  def verify_move(input); end
+  def verify_move(input)
+    return input if input.between?(1, 7)
+
+    puts 'Invalid input!'
+    select_move
+  end
 
   def game_over?; end
 

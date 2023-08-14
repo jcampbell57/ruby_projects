@@ -42,7 +42,10 @@ class Game
 
   def display_board; end
 
-  def select_move; end
+  def select_move
+    print 'Input the culumn you would like to drop your marker 1-7: '
+    verify_move(gets.chomp.to_i)
+  end
 
   def verify_move(input); end
 

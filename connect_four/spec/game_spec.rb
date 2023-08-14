@@ -305,20 +305,19 @@ describe Game do
   end
 
   describe '#end_game' do
+    before do
+      allow(game).to receive(:display_result)
+      allow(game).to receive(:prompt_new_game)
+    end
+
     # xit 'displays result' do
     #   # no test needed
     # end
 
     context 'player wins single player' do
       before do
-        game.board = [
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
-        ]
+        game.winner = player_marker
+        game.mode = 1
       end
 
       it 'declares player winner' do
@@ -329,14 +328,8 @@ describe Game do
 
     context 'player loses single player' do
       before do
-        game.board = [
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
-        ]
+        game.winner = second_marker
+        game.mode = 1
       end
 
       it 'wishes better luck next time' do
@@ -347,14 +340,8 @@ describe Game do
 
     context 'player wins multiplayer' do
       before do
-        game.board = [
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
-        ]
+        game.winner = player_marker
+        game.mode = 2
       end
 
       it 'declares player winner' do
@@ -365,18 +352,12 @@ describe Game do
 
     context 'second_player wins multiplayer' do
       before do
-        game.board = [
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
-          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
-        ]
+        game.winner = second_marker
+        game.mode = 2
       end
 
       it 'declares second player winner' do
-        expect(game).to receive(:puts).with("'Player two wins!")
+        expect(game).to receive(:puts).with('Player two wins!')
         game.end_game
       end
     end
@@ -400,7 +381,7 @@ describe Game do
       allow(game).to receive(:verify_new_game_input).and_return(valid_input)
     end
 
-    xit 'prompts player for new game' do
+    it 'prompts player for new game' do
       expect(game).to receive(:print).with('Would you like to play again? y/n: ')
       expect(game).to receive(:gets).and_return(valid_input)
       expect(game).to receive(:verify_new_game_input).and_return(valid_input)

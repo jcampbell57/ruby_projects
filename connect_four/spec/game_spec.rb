@@ -111,6 +111,15 @@ describe Game do
   #   end
   # end
 
+  describe '#display_row' do
+    context 'when given row index' do
+      it 'returns row as array' do
+        empty_circle = "\u25cb"
+        expect(game.display_row(5)).to eql(Array.new(7, empty_circle))
+      end
+    end
+  end
+
   describe '#select_move' do
     it 'prompts player for move' do
       valid_input = 4

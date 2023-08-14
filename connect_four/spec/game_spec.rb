@@ -97,14 +97,14 @@ describe Game do
     end
   end
 
-  describe '#display_board' do
-    xit 'displays board' do
-      # no test needed
-    end
-  end
+  # describe '#display_board' do
+  #   xit 'displays board' do
+  #     # no test needed
+  #   end
+  # end
 
   describe '#select_move' do
-    xit 'prompts player for move' do
+    it 'prompts player for move' do
       valid_input = 4
       allow(game).to receive(:gets).and_return(valid_input.to_s)
       expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
@@ -116,7 +116,7 @@ describe Game do
 
   describe '#verify_move' do
     context 'when given valid input' do
-      xit 'returns input' do
+      it 'returns input' do
         valid_input = 4
         expect(game.verify_move(valid_input)).to_return(valid_input.to_s)
         game.verify_move
@@ -124,7 +124,7 @@ describe Game do
     end
 
     context 'when given invalid input' do
-      xit 'prompts player for new input' do
+      it 'prompts player for new input' do
         valid_input = 4
         invalid_input = 'b'
         expect(game).to receive(:puts).with('Invalid input!').once
@@ -165,9 +165,9 @@ describe Game do
   end
 
   describe '#end_game' do
-    xit 'displays result' do
-      # no test needed
-    end
+    # xit 'displays result' do
+    #   # no test needed
+    # end
 
     context 'player wins' do
       before do
@@ -210,11 +210,11 @@ describe Game do
     end
   end
 
-  describe '#display_result' do
-    xit 'displays result' do
-      # no test needed
-    end
-  end
+  # describe '#display_result' do
+  #   xit 'displays result' do
+  #     # no test needed
+  #   end
+  # end
 
   describe '#prompt_new_game' do
     before do

@@ -170,26 +170,43 @@ describe Game do
     context 'when game is not over' do
       it 'returns false' do
         expect(game.game_over?).to be(false)
-        game.game_over?
+        # game.game_over?
       end
     end
   end
 
   describe '#vertical_win?' do
-    context 'when there are 4 vertically matching markers' do
+    context 'when there are 4 vertically matching player markers' do
       before do
-        @board = [
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, player_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, player_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, player_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, player_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark]
+        game.board = [
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
         ]
       end
 
       it 'returns true' do
-        expect(game.diagonal_win?).to be(true)
+        expect(game.vertical_win?).to be(true)
+      end
+    end
+
+    context 'when there are 4 vertically matching second markers' do
+      before do
+        game.board = [
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
+        ]
+      end
+
+      it 'returns true' do
+        expect(game.vertical_win?).to be(true)
       end
     end
 
@@ -199,26 +216,43 @@ describe Game do
       end
 
       it 'returns false' do
-        expect(game.diagonal_win?).to be(false)
+        expect(game.vertical_win?).to be(false)
       end
     end
   end
 
   describe '#horizontal_win?' do
-    context 'when there are 4 horizontally matching markers' do
+    context 'when there are 4 horizontally matching player markers' do
       before do
         @board = [
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, player_mark, player_mark, player_mark, player_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark]
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, player_marker, player_marker, player_marker, player_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
         ]
       end
 
-      xit 'returns true' do
-        expect(game.diagonal_win?).to be(true)
+      it 'returns true' do
+        expect(game.horizontal_win?).to be(true)
+      end
+    end
+
+    context 'when there are 4 horizontally matching second markers' do
+      before do
+        @board = [
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, second_marker, second_marker, second_marker, second_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
+        ]
+      end
+
+      it 'returns true' do
+        expect(game.horizontal_win?).to be(true)
       end
     end
 
@@ -227,32 +261,53 @@ describe Game do
         @board = game.create_board
       end
 
-      xit 'returns false' do
-        expect(game.diagonal_win?).to be(false)
+      it 'returns false' do
+        expect(game.horizontal_win?).to be(false)
       end
     end
   end
 
   describe '#diagonal_win?' do
-    context 'when there are 4 diagonally matching markers' do
+    context 'when there are 4 diagonally matching player markers' do
       before do
         @board = [
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, player_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, player_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, player_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, player_mark, empty_mark, empty_mark, empty_mark, empty_mark],
-          [empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark, empty_mark]
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, player_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, player_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
         ]
       end
 
-      xit 'returns true' do
+      it 'returns true' do
+        expect(game.diagonal_win?).to be(true)
+      end
+    end
+
+    context 'when there are 4 diagonally matching second markers' do
+      before do
+        @board = [
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, second_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, second_marker, empty_marker, empty_marker, empty_marker, empty_marker],
+          [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker]
+        ]
+      end
+
+      it 'returns true' do
         expect(game.diagonal_win?).to be(true)
       end
     end
 
     context 'when there are not 4 diagonally matching markers' do
-      xit 'returns false' do
+      before do
+        @board = game.create_board
+      end
+
+      it 'returns false' do
         expect(game.diagonal_win?).to be(false)
       end
     end
@@ -265,7 +320,7 @@ describe Game do
 
     context 'player wins' do
       before do
-        game.player_marker = 'b'
+        game.player_markerer = 'b'
         game.board = [
           [' ', ' ', ' ', ' ', ' ', ' ', ' '],
           [' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -277,13 +332,13 @@ describe Game do
       end
 
       xit 'declares player winner' do
-        expect(game).to receive(:puts).with("'#{game.player_marker}' wins!")
+        expect(game).to receive(:puts).with("'#{game.player_markerer}' wins!")
       end
     end
 
     context 'second_player wins' do
       before do
-        game.second_marker = 'j'
+        game.second_markerer = 'j'
         game.board = [
           [' ', ' ', ' ', ' ', ' ', ' ', ' '],
           [' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -295,7 +350,7 @@ describe Game do
       end
 
       xit 'declares player winner' do
-        expect(game).to receive(:puts).with("'#{game.second_marker}' wins!")
+        expect(game).to receive(:puts).with("'#{game.second_markerer}' wins!")
       end
     end
 

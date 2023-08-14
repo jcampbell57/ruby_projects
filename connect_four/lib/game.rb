@@ -11,8 +11,8 @@ class Game
   def initialize(board = create_board, mode = nil)
     self.board = board
     self.mode = mode
-    self.player_marker = green_circle
-    self.second_marker = pink_circle
+    self.player_marker = player_mark
+    self.second_marker = second_mark
   end
 
   def play
@@ -42,23 +42,23 @@ class Game
   end
 
   def create_board
-    Array.new(7, Array.new(6, empty_circle))
+    Array.new(6, Array.new(7, empty_mark))
   end
 
   def display_board
-    6.times do |i|
-      puts display_row(5 - i)
+    @board.reverse.each do |row|
+      puts row.split(' ')
     end
     puts '1 2 3 4 5 6 7'
   end
 
-  def display_row(row_index)
-    current_row = []
-    @board.each do |column|
-      current_row << column[row_index]
-    end
-    current_row
-  end
+  # def display_row(row_index)
+  #   current_row = []
+  #   @board.each do |column|
+  #     current_row << column[row_index]
+  #   end
+  #   current_row
+  # end
 
   def select_move
     print 'Input the culumn you would like to drop your marker 1-7: '
@@ -72,7 +72,17 @@ class Game
     select_move
   end
 
-  def game_over?; end
+  def game_over?
+    return true if vertical_win? || horizontal_win? || diagonal_win?
+
+    false
+  end
+
+  def vertical_win?; end
+
+  def horizontal_win?; end
+
+  def diagonal_win?; end
 
   def end_game; end
 

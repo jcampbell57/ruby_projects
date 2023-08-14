@@ -47,46 +47,52 @@ describe Game do
     context 'when given valid input' do
       it 'returns input' do
         valid_input = 1
-        expect(game.verify_mode(valid_input)).to_return(valid_input)
+        expect(game.verify_mode(valid_input)).to be(valid_input)
         game.verify_mode(valid_input)
       end
     end
 
     context 'when given invalid input' do
-      before do
-        valid_input = 1
-        allow(game).to receive(:puts).with('Invalid input!').once
-        allow(game).to receive(:select_mode).once
-        allow(game).to receive(:gets).and_return(valid_input.to_s)
-      end
-
       it 'prompts player for new input' do
+        valid_input = 1
         invalid_input = 'b'
         expect(game).to receive(:puts).with('Invalid input!').once
-        expect(game).to receive(:select_mode).once
-        expect(game).to receive(:gets).and_return(valid_input)
-        game.verify_mode(invalid_input)
-        expect(game.mode).to be(valid_input)
+        expect(game).to receive(:select_mode).once.and_return(valid_input)
+        expect(game.verify_mode(invalid_input)).to be(valid_input)
       end
     end
   end
 
   describe '#game_loop' do
-    context 'when game_over? is true' do
+    context 'when game is not over' do
       before do
-        # set board
+        allow(game).to receive(:game_over?).and_return(false, false, true) # Simulate loop iterations
+        allow(game).to receive(:display_board)
+        allow(game).to receive(:select_move)
         allow(game).to receive(:end_game)
       end
 
-      xit 'ends game' do
-        expect(game).to receive(:end_game)
+      it 'calls display_board and select_move' do
+        expect(game).to receive(:display_board).twice
+        expect(game).to receive(:select_move).twice
+        expect(game).to receive(:end_game).once
         game.game_loop
       end
     end
 
-    context 'when game_over? is false' do
-      xit 'loops' do
-        expect(game).to receive(:loop)
+    context 'when game is over' do
+      before do
+        allow(game).to receive(:game_over?).and_return(true)
+        allow(game).to receive(:display_board)
+        allow(game).to receive(:select_move)
+        allow(game).to receive(:end_game)
+      end
+
+      it 'calls end_game' do
+        expect(game).not_to receive(:display_board)
+        expect(game).not_to receive(:select_move)
+        expect(game).to receive(:end_game).once
+        game.game_loop
       end
     end
   end

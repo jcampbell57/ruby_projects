@@ -97,6 +97,14 @@ describe Game do
     end
   end
 
+  describe '#create_board' do
+    it 'creates board' do
+      empty_circle = "\u25cb"
+      expect(game).to receive(:create_board).and_return(Array.new(7, Array.new(6, empty_circle)))
+      game.create_board
+    end
+  end
+
   # describe '#display_board' do
   #   xit 'displays board' do
   #     # no test needed

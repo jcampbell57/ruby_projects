@@ -224,7 +224,7 @@ describe Game do
   describe '#horizontal_win?' do
     context 'when there are 4 horizontally matching player markers' do
       before do
-        @board = [
+        game.board = [
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
           [empty_marker, empty_marker, player_marker, player_marker, player_marker, player_marker, empty_marker],
@@ -241,7 +241,7 @@ describe Game do
 
     context 'when there are 4 horizontally matching second markers' do
       before do
-        @board = [
+        game.board = [
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
           [empty_marker, empty_marker, second_marker, second_marker, second_marker, second_marker, empty_marker],
@@ -258,7 +258,7 @@ describe Game do
 
     context 'when there are not 4 horizontally matching markers' do
       before do
-        @board = game.create_board
+        game.board = game.create_board
       end
 
       it 'returns false' do
@@ -270,7 +270,7 @@ describe Game do
   describe '#diagonal_win?' do
     context 'when there are 4 diagonally matching player markers' do
       before do
-        @board = [
+        game.board = [
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, empty_marker],
           [empty_marker, empty_marker, empty_marker, empty_marker, empty_marker, player_marker, empty_marker],
           [empty_marker, empty_marker, empty_marker, empty_marker, player_marker, empty_marker, empty_marker],

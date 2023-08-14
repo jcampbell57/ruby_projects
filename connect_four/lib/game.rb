@@ -50,14 +50,6 @@ class Game
     puts '1 2 3 4 5 6 7'
   end
 
-  # def display_row(row_index)
-  #   current_row = []
-  #   @board.each do |column|
-  #     current_row << column[row_index]
-  #   end
-  #   current_row
-  # end
-
   def select_move
     print 'Input the culumn you would like to drop your marker 1-7: '
     verify_move(gets.chomp.to_i)
@@ -115,6 +107,31 @@ class Game
   end
 
   def diagonal_win?
+    @board.each_with_index do |row, row_index|
+      row.each_with_index do |mark, column_index|
+        if mark == player_marker &&
+           @board[row_index + 1][column_index + 1] == player_marker &&
+           @board[row_index + 2][column_index + 2] == player_marker &&
+           @board[row_index + 3][column_index + 3] == player_marker
+          return true
+        elsif mark == player_marker &&
+              @board[row_index + 1][column_index - 1] == player_marker &&
+              @board[row_index + 2][column_index - 2] == player_marker &&
+              @board[row_index + 3][column_index - 3] == player_marker
+          return true
+        elsif mark == second_marker &&
+              @board[row_index + 1][column_index + 1] == second_marker &&
+              @board[row_index + 2][column_index + 2] == second_marker &&
+              @board[row_index + 3][column_index + 3] == second_marker
+          return true
+        elsif mark == second_marker &&
+              @board[row_index + 1][column_index - 1] == second_marker &&
+              @board[row_index + 2][column_index - 2] == second_marker &&
+              @board[row_index + 3][column_index - 3] == second_marker
+          return true
+        end
+      end
+    end
     false
   end
 

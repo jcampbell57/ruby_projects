@@ -146,6 +146,11 @@ class Game
 
   def end_game
     display_result
+    prompt_new_game
+  end
+
+  def display_result
+    display_board
     if @winner == player_marker && @mode == 1
       puts 'You win!'
     elsif @winner == second_marker && @mode == 1
@@ -155,12 +160,17 @@ class Game
     elsif @winner == second_marker && @mode == 2
       puts 'Player two wins!'
     end
-    prompt_new_game
   end
 
-  def display_result; end
+  def prompt_new_game
+    print 'Would you like to play again? y/n: '
+    input = verify_new_game_input(gets.chomp.downcase)
+    return unless input == 'y'
 
-  def prompt_new_game; end
+    @board = create_board
+    @winner = nil
+    play
+  end
 
   def verify_new_game_input(input); end
 end

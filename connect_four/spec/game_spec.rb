@@ -165,6 +165,12 @@ describe Game do
     end
   end
 
+  describe '#switch_marker' do
+    old_marker = game.marker
+    game.switch_marker
+    expect(game.marker).not_to eql(old_marker)
+  end
+
   describe '#game_over?' do
     context 'when game is over' do
       before do

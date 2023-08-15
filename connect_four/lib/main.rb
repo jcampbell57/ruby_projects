@@ -1,3 +1,5 @@
 # frozen_string_literal: true
 
-# require 'main'
+require_relative 'game'
+
+Game.new.play

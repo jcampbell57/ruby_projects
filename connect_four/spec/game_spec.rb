@@ -117,15 +117,16 @@ describe Game do
   describe '#select_move' do
     before do
       valid_input = 4
+      allow(game).to receive(:puts).once
       allow(game).to receive(:gets).and_return(valid_input.to_s)
     end
 
     it 'prompts player for move' do
       valid_input = 4
+      expect(game).to receive(:puts).once
       expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
       expect(game).to receive(:gets).and_return(valid_input.to_s)
-      expect(game).to receive(:verify_move)
-      expect(game).to receive(:place_marker)
+      expect(game).to receive(:place_marker).with(valid_input - 1)
       game.select_move
     end
   end
@@ -140,13 +141,17 @@ describe Game do
     end
 
     context 'when given invalid input' do
+      before do
+        allow(game).to receive(:puts)
+      end
+
       it 'prompts player for new input' do
         valid_input = 4
         invalid_input = 'b'
         expect(game).to receive(:puts).with('Invalid input!').once
         expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
         expect(game).to receive(:gets).and_return(valid_input.to_s)
-        expect(game).to receive(:place_marker).with(valid_input)
+        expect(game).to receive(:place_marker).with(valid_input - 1)
         game.verify_move(invalid_input.chomp.to_i)
       end
     end
@@ -166,9 +171,11 @@ describe Game do
   end
 
   describe '#switch_marker' do
-    old_marker = game.marker
-    game.switch_marker
-    expect(game.marker).not_to eql(old_marker)
+    it 'switches marker' do
+      old_marker = game.marker
+      game.switch_marker
+      expect(game.marker).not_to eql(old_marker)
+    end
   end
 
   describe '#game_over?' do

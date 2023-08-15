@@ -41,19 +41,25 @@ class Game
   end
 
   def create_board
-    Array.new(6, Array.new(7, empty_marker))
+    Array.new(6) { Array.new(7, empty_marker.dup) }
   end
 
   def display_board
     @board.reverse.each do |row|
-      puts row.split(' ')
+      puts row.join(' ').prepend('  ')
     end
-    puts '1 2 3 4 5 6 7'
+    puts '  1 2 3 4 5 6 7'
   end
 
   def select_move
+    if @marker == player_marker
+      puts "Player one's turn!"
+    else
+      puts "Player two's turn!"
+    end
     print 'Input the culumn you would like to drop your marker 1-7: '
-    place_marker(verify_move(gets.chomp.to_i))
+    switch_marker unless game_over?
+    place_marker(verify_move(gets.chomp.to_i) - 1)
   end
 
   def verify_move(input)
@@ -69,8 +75,11 @@ class Game
         row[column_index] = @marker
         break
       end
-      break if row[column_index] == empty_marker
     end
+  end
+
+  def switch_marker
+    @marker = @marker == player_marker ? second_marker : player_marker
   end
 
   def game_over?

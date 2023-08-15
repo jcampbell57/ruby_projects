@@ -115,13 +115,23 @@ describe Game do
   # end
 
   describe '#select_move' do
-    it 'prompts player for move' do
+    before do
       valid_input = 4
       allow(game).to receive(:gets).and_return(valid_input.to_s)
+    end
+
+    it 'prompts player for move' do
+      valid_input = 4
       expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
       expect(game).to receive(:gets).and_return(valid_input.to_s)
       expect(game).to receive(:verify_move)
       game.select_move
+    end
+
+    it 'places mark on board' do
+      old_board = game.board
+      game.select_move
+      expect(game.board).not_to eql(old_board)
     end
   end
 
@@ -321,7 +331,7 @@ describe Game do
 
     context 'player wins single player' do
       before do
-        game.winner = player_marker
+        game.marker = player_marker
         game.mode = 1
       end
 
@@ -333,7 +343,7 @@ describe Game do
 
     context 'player loses single player' do
       before do
-        game.winner = second_marker
+        game.marker = second_marker
         game.mode = 1
       end
 
@@ -345,7 +355,7 @@ describe Game do
 
     context 'player wins multiplayer' do
       before do
-        game.winner = player_marker
+        game.marker = player_marker
         game.mode = 2
       end
 
@@ -357,7 +367,7 @@ describe Game do
 
     context 'second_player wins multiplayer' do
       before do
-        game.winner = second_marker
+        game.marker = second_marker
         game.mode = 2
       end
 
@@ -390,11 +400,11 @@ describe Game do
         expect(game.board).to eql(Array.new(6, Array.new(7, empty_circle)))
       end
 
-      it 'resets game.winner' do
-        game.winner = 'not_nil'
-        expect(game.winner).not_to be(nil)
+      it 'resets game.marker' do
+        game.marker = 'not_nil'
+        expect(game.marker).not_to be(player_marker)
         game.prompt_new_game
-        expect(game.winner).to be(nil)
+        expect(game.marker).to eql(player_marker)
       end
 
       it 'starts new game' do

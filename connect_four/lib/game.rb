@@ -2,7 +2,7 @@
 
 # Game class
 class Game
-  attr_accessor :board, :mode, :winner
+  attr_accessor :board, :mode, :marker
 
   require_relative 'markers'
 
@@ -11,7 +11,7 @@ class Game
   def initialize(board = create_board, mode = nil)
     self.board = board
     self.mode = mode
-    self.winner = nil
+    self.marker = player_marker
   end
 
   def play
@@ -76,13 +76,11 @@ class Game
            @board[row_index + 1][column_index] == player_marker &&
            @board[row_index + 2][column_index] == player_marker &&
            @board[row_index + 3][column_index] == player_marker
-          @winner = player_marker
           return true
         elsif mark == second_marker &&
               @board[row_index + 1][column_index] == second_marker &&
               @board[row_index + 2][column_index] == second_marker &&
               @board[row_index + 3][column_index] == second_marker
-          @winner = second_marker
           return true
         end
       end
@@ -97,13 +95,11 @@ class Game
            row[column_index + 1] == player_marker &&
            row[column_index + 2] == player_marker &&
            row[column_index + 3] == player_marker
-          @winner = player_marker
           return true
         elsif mark == second_marker &&
               row[column_index + 1] == second_marker &&
               row[column_index + 2] == second_marker &&
               row[column_index + 3] == second_marker
-          @winner = second_marker
           return true
         end
       end
@@ -118,25 +114,21 @@ class Game
            @board[row_index + 1][column_index + 1] == player_marker &&
            @board[row_index + 2][column_index + 2] == player_marker &&
            @board[row_index + 3][column_index + 3] == player_marker
-          @winner = player_marker
           return true
         elsif mark == player_marker &&
               @board[row_index + 1][column_index - 1] == player_marker &&
               @board[row_index + 2][column_index - 2] == player_marker &&
               @board[row_index + 3][column_index - 3] == player_marker
-          @winner = player_marker
           return true
         elsif mark == second_marker &&
               @board[row_index + 1][column_index + 1] == second_marker &&
               @board[row_index + 2][column_index + 2] == second_marker &&
               @board[row_index + 3][column_index + 3] == second_marker
-          @winner = second_marker
           return true
         elsif mark == second_marker &&
               @board[row_index + 1][column_index - 1] == second_marker &&
               @board[row_index + 2][column_index - 2] == second_marker &&
               @board[row_index + 3][column_index - 3] == second_marker
-          @winner = second_marker
           return true
         end
       end
@@ -151,13 +143,13 @@ class Game
 
   def display_result
     display_board
-    if @winner == player_marker && @mode == 1
+    if @marker == player_marker && @mode == 1
       puts 'You win!'
-    elsif @winner == second_marker && @mode == 1
+    elsif @marker == second_marker && @mode == 1
       puts 'Better luck next time!'
-    elsif @winner == player_marker && @mode == 2
+    elsif @marker == player_marker && @mode == 2
       puts 'Player one wins!'
-    elsif @winner == second_marker && @mode == 2
+    elsif @marker == second_marker && @mode == 2
       puts 'Player two wins!'
     end
   end
@@ -168,7 +160,7 @@ class Game
     return unless input == 'y'
 
     @board = create_board
-    @winner = nil
+    @marker = player_marker
     play
   end
 

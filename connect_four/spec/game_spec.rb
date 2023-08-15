@@ -103,7 +103,7 @@ describe Game do
   describe '#create_board' do
     it 'creates board' do
       empty_circle = "\u25cb"
-      expect(game).to receive(:create_board).and_return(Array.new(7, Array.new(6, empty_circle)))
+      expect(game).to receive(:create_board).and_return(Array.new(6, Array.new(7, empty_circle)))
       game.create_board
     end
   end
@@ -370,23 +370,55 @@ describe Game do
 
   describe '#prompt_new_game' do
     before do
-      valid_input = 'n'
       allow(game).to receive(:print).with('Would you like to play again? y/n: ')
-      allow(game).to receive(:gets).and_return(valid_input)
-      allow(game).to receive(:verify_new_game_input).and_return(valid_input)
+      allow(game).to receive(:gets).and_return('y') # Assume user wants to play again
+      allow(game).to receive(:verify_new_game_input).and_return('y') # Assume user wants to play again
+      allow(game).to receive(:play)
     end
 
     it 'prompts player for new game' do
-      expect(game).to receive(:print).with('Would you like to play again? y/n: ')
-      expect(game).to receive(:gets).and_return(valid_input)
-      expect(game).to receive(:verify_new_game_input).and_return(valid_input)
-      game.select_move
+      expect(game).to receive(:print).with('Would you like to play again? y/n: ').once
+      game.prompt_new_game
+    end
+
+    context 'when new game confirmed' do
+      it 'reset game board' do
+        game.board = nil
+        empty_circle = "\u25cb"
+        expect(game.board).not_to eql(Array.new(6, Array.new(7, empty_circle)))
+        game.prompt_new_game
+        expect(game.board).to eql(Array.new(6, Array.new(7, empty_circle)))
+      end
+
+      it 'resets game.winner' do
+        game.winner = 'not_nil'
+        expect(game.winner).not_to be(nil)
+        game.prompt_new_game
+        expect(game.winner).to be(nil)
+      end
+
+      it 'starts new game' do
+        expect(game).to receive(:play)
+        game.prompt_new_game
+      end
+    end
+
+    context 'when new game denied' do
+      before do
+        allow(game).to receive(:gets).and_return('n') # Assume user doesn't want to play again
+        allow(game).to receive(:verify_new_game_input).and_return('n') # Assume user doesn't want to play again
+      end
+
+      it 'exits' do
+        expect(game).not_to receive(:play)
+        game.prompt_new_game
+      end
     end
   end
 
   describe '#verify_new_game_input' do
     context 'when given valid input (lowercase)' do
-      xit 'returns input' do
+      it 'returns input' do
         valid_input = 'n'
         expect(game.verify_new_game_input(valid_input)).to be(valid_input)
         game.verify_new_game_input(valid_input)
@@ -394,9 +426,9 @@ describe Game do
     end
 
     context 'when given valid input (uppercase)' do
-      xit 'returns input' do
+      it 'returns input' do
         valid_input = 'N'
-        expect(game.verify_new_game_input(valid_input)).to be(valid_input)
+        expect(game.verify_new_game_input(valid_input)).to be(valid_input.downcase)
         game.verify_new_game_input(valid_input)
       end
     end
@@ -407,7 +439,7 @@ describe Game do
         allow(game).to receive(:prompt_new_game).once
       end
 
-      xit 'prompts player for new input' do
+      it 'prompts player for new input' do
         valid_input = 'b'
         expect(game).to receive(:puts).with('Invalid input!').once
         expect(game).to receive(:prompt_new_game).once

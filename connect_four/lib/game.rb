@@ -172,5 +172,10 @@ class Game
     play
   end
 
-  def verify_new_game_input(input); end
+  def verify_new_game_input(input)
+    return input if input.to_s.match(/[ny]/) && input.to_s.size == 1
+
+    puts 'Invalid input!'
+    prompt_new_game
+  end
 end

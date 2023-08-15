@@ -428,8 +428,8 @@ describe Game do
     context 'when given valid input (uppercase)' do
       it 'returns input' do
         valid_input = 'N'
-        expect(game.verify_new_game_input(valid_input)).to be(valid_input.downcase)
-        game.verify_new_game_input(valid_input)
+        expect(game.verify_new_game_input(valid_input.downcase)).to eql(valid_input.downcase)
+        game.verify_new_game_input(valid_input.downcase)
       end
     end
 
@@ -440,10 +440,10 @@ describe Game do
       end
 
       it 'prompts player for new input' do
-        valid_input = 'b'
+        invalid_input = 'b'
         expect(game).to receive(:puts).with('Invalid input!').once
         expect(game).to receive(:prompt_new_game).once
-        game.verify_new_game_input(valid_input)
+        game.verify_new_game_input(invalid_input)
       end
     end
   end

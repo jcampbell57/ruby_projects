@@ -52,18 +52,38 @@ class Game
   end
 
   def select_move
-    if @marker == player_marker
-      puts "Player one's turn!"
-    else
-      puts "Player two's turn!"
+    if @mode == 1
+      input = nil
+      if @marker == player_marker
+        puts 'Your turn!'
+        print 'Input the culumn you would like to drop your marker 1-7: '
+        input = gets.chomp.to_i
+      else
+        puts "Computer's turn!"
+        print 'The computer chooses: '
+        sleep(1)
+        input = rand(1..7)
+      end
+      place_marker(verify_move(input - 1))
+      switch_marker unless game_over?
+      input
+    elsif @mode == 2
+      if @marker == player_marker
+        puts "Player one's turn!"
+      else
+        puts "Player two's turn!"
+      end
+
+      print 'Input the culumn you would like to drop your marker 1-7: '
+      input = gets.chomp.to_i
+      place_marker(verify_move(input) - 1)
+      switch_marker unless game_over?
+      input
     end
-    print 'Input the culumn you would like to drop your marker 1-7: '
-    switch_marker unless game_over?
-    place_marker(verify_move(gets.chomp.to_i) - 1)
   end
 
   def verify_move(input)
-    return input if input.between?(1, 7)
+    return input if input.between?(0, 6)
 
     puts 'Invalid input!'
     select_move

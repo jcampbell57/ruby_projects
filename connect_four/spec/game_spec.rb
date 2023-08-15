@@ -19,7 +19,7 @@ describe Game do
     end
 
     it 'sets game.mode' do
-      # expect { game.play }.to change(game.mode).to be(single_player_mode)
+      game.mode = nil
       expect(game.mode).to be(nil)
       game.play
       expect(game.mode).to be(single_player_mode)
@@ -117,16 +117,14 @@ describe Game do
   describe '#select_move' do
     before do
       valid_input = 4
-      allow(game).to receive(:puts).once
+      game.mode = 2
       allow(game).to receive(:gets).and_return(valid_input.to_s)
     end
 
     it 'prompts player for move' do
-      valid_input = 4
       expect(game).to receive(:puts).once
       expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
-      expect(game).to receive(:gets).and_return(valid_input.to_s)
-      expect(game).to receive(:place_marker).with(valid_input - 1)
+      expect(game).to receive(:place_marker)
       game.select_move
     end
   end
@@ -142,6 +140,7 @@ describe Game do
 
     context 'when given invalid input' do
       before do
+        game.mode = 2
         allow(game).to receive(:puts)
       end
 

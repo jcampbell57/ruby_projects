@@ -13,6 +13,11 @@ board = [
 
 # Game class
 class Game
+  attr_accessor :board, :mode, :player, :turn
+
+  require_relative 'markers'
+  include Markers
+
   def initialize(board = create_board, mode = nil, player = nil, turn = 'white')
     self.board = board
     self.mode = mode

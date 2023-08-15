@@ -53,7 +53,7 @@ class Game
 
   def select_move
     print 'Input the culumn you would like to drop your marker 1-7: '
-    verify_move(gets.chomp.to_i)
+    place_marker(verify_move(gets.chomp.to_i))
   end
 
   def verify_move(input)
@@ -61,6 +61,16 @@ class Game
 
     puts 'Invalid input!'
     select_move
+  end
+
+  def place_marker(column_index)
+    @board.each do |row|
+      if row[column_index] == empty_marker
+        row[column_index] = @marker
+        break
+      end
+      break if row[column_index] == empty_marker
+    end
   end
 
   def game_over?

@@ -125,13 +125,8 @@ describe Game do
       expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
       expect(game).to receive(:gets).and_return(valid_input.to_s)
       expect(game).to receive(:verify_move)
+      expect(game).to receive(:place_marker)
       game.select_move
-    end
-
-    it 'places mark on board' do
-      old_board = game.board
-      game.select_move
-      expect(game.board).not_to eql(old_board)
     end
   end
 
@@ -151,8 +146,22 @@ describe Game do
         expect(game).to receive(:puts).with('Invalid input!').once
         expect(game).to receive(:print).with('Input the culumn you would like to drop your marker 1-7: ')
         expect(game).to receive(:gets).and_return(valid_input.to_s)
-        expect(game.verify_move(invalid_input.chomp.to_i)).to be(valid_input)
+        expect(game).to receive(:place_marker).with(valid_input)
+        game.verify_move(invalid_input.chomp.to_i)
       end
+    end
+  end
+
+  describe '#place_marker' do
+    before do
+      game.board = game.create_board
+    end
+
+    it 'places mark on board' do
+      game.board = game.create_board
+      expect(game.board).to eql(game.create_board)
+      game.place_marker(4)
+      expect(game.board).not_to eql(game.create_board)
     end
   end
 

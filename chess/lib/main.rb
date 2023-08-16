@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
 # lib/main.rb
-require './lib/game'
-Game.new.play
+require_relative 'game'
+game = Game.new
+
+# display board
+puts "board from white's perspective: "
+game.turn = 'white'
+game.display_board
+puts
+puts "board from black's perspective: "
+game.turn = 'black'
+game.display_board

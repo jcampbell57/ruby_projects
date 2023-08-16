@@ -5,9 +5,8 @@ class Game
   attr_accessor :board, :mode, :player, :turn
 
   require_relative 'board'
-  require_relative 'markers'
-  include Board
-  include Markers
+  require_relative 'pieces'
+  include Pieces
 
   def initialize(board = Board.new, mode = nil, player = nil, turn = 'white')
     self.board = board
@@ -55,6 +54,10 @@ class Game
       switch_turn unless checkmate?
     end
     end_game
+  end
+
+  def display_board
+    @turn == 'white' ? @board.display_white : @board.display_black
   end
 
   def select_move

@@ -1,24 +1,15 @@
 # frozen_string_literal: true
 
-board = [
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil],
-  [nil, nil, nil, nil, nil, nil, nil, nil]
-]
-
-# Game class
+# lib/game.rb
 class Game
   attr_accessor :board, :mode, :player, :turn
 
+  require_relative 'board'
   require_relative 'markers'
+  include Barkers
   include Markers
 
-  def initialize(board = create_board, mode = nil, player = nil, turn = 'white')
+  def initialize(board = Board.new, mode = nil, player = nil, turn = 'white')
     self.board = board
     self.mode = mode
     self.player = player
@@ -64,17 +55,6 @@ class Game
       switch_turn unless checkmate?
     end
     end_game
-  end
-
-  def create_board
-    Array.new(8) { Array.new(8, nil) }
-  end
-
-  def display_board
-    @board.each_with_index do |row_index, new_row_index|
-      puts row.join(' ').prepend(" #{8 _index- new_row_index}")
-    end
-    puts '    a b c d e f g'
   end
 
   def select_move
@@ -154,7 +134,7 @@ class Game
     input = verify_new_game_input(gets.chomp.downcase)
     return unless input == 'y'
 
-    @board = create_board
+    @board = Board.new
     @turn = 'white'
     play
   end

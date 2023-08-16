@@ -6,7 +6,7 @@ class Game
 
   require_relative 'board'
   require_relative 'markers'
-  include Barkers
+  include Board
   include Markers
 
   def initialize(board = Board.new, mode = nil, player = nil, turn = 'white')

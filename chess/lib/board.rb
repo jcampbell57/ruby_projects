@@ -2,6 +2,8 @@
 
 # lib/board.rb
 class Board
+  require_relative 'colors'
+
   def initialize(squares = Array.new(8) { Array.new(8, nil) })
     self.squares = squares
   end

@@ -8,7 +8,7 @@ class Game
   require_relative 'pieces'
   include Pieces
 
-  def initialize(board = Board.new, mode = nil, player = nil, turn = 'white')
+  def initialize(board = Board.new, mode = nil, player = 'white', turn = 'white')
     self.board = board
     self.mode = mode
     self.player = player
@@ -36,11 +36,13 @@ class Game
 
   def select_color
     print 'Input 1 to play as white or 2 to play as black: '
-    verify_color(gets.chomp.downcase)
+    input = verify_color(gets.chomp.to_i)
+    return 'white' if input == 1
+    return 'black' if input == 2
   end
 
   def verify_color(input)
-    return input if input.to_s.match(/[wb]/) && input.to_s.size == 1
+    return input if input.to_s.match(/[1-2]/) && input.to_s.size == 1
 
     # else
     puts 'Invalid input!'
@@ -57,25 +59,25 @@ class Game
   end
 
   def display_board
-    @turn == 'white' ? @board.display_white : @board.display_black
+    @player == 'white' ? @board.display_white : @board.display_black
   end
 
   def select_move
     if @mode == 1
       input = nil
-      if @marker == player_marker
+      if @turn == @player
         puts 'Your turn!'
         print 'Input: '
         input = gets.chomp.to_i
       else
         puts "Computer's turn!"
-        print 'The computer chooses: '
-        sleep(1)
-        input = nil
+        # print 'The computer chooses: '
+        # sleep(1)
+        # input = nil
       end
-      place_piece(verify_move(input))
+      # place_piece(verify_move(input))
     elsif @mode == 2
-      if @marker == player_marker
+      if @turn == @player
         puts "White's turn!"
       else
         puts "Black's turn!"

@@ -47,7 +47,7 @@ class Board
       puts row.join('').prepend("  #{1 + i} ")
       insert_padding(i)
     end
-    puts '     h      g      f      e      d      c      b      a'
+    puts '       h      g      f      e      d      c      b      a'
   end
 
   def insert_padding(index)

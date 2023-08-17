@@ -24,7 +24,7 @@ class Board
         row << cell_content
       end
       insert_padding(i)
-      puts row.join('').prepend("  #{8 - i} ")
+      puts row.join('').prepend(" #{8 - i} ")
       insert_padding(i)
     end
     puts '       a      b      c      d      e      f      g      h'
@@ -44,7 +44,7 @@ class Board
         row << cell_content
       end
       insert_padding(i)
-      puts row.join('').prepend("  #{1 + i} ")
+      puts row.join('').prepend(" #{1 + i} ")
       insert_padding(i)
     end
     puts '       h      g      f      e      d      c      b      a'
@@ -52,9 +52,9 @@ class Board
 
   def insert_padding(index)
     if index.even?
-      puts padding_variant_one.prepend('    ')
+      puts padding_variant_one.prepend('   ')
     else
-      puts padding_variant_two.prepend('    ')
+      puts padding_variant_two.prepend('   ')
     end
   end
 

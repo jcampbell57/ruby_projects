@@ -86,14 +86,26 @@ class String
   def reverse_color
     "\e[7m#{self}\e[27m"
   end
+end
 
-  # colors below this came from here: https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
+# colors below this came from here: https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
 
-  def green_checker
-    "\e[48;5;71m"
-  end
+def green_checker
+  "\e[48;5;71m"
+end
 
-  def whiteish_checker
-    "\e[48;5;230m"
-  end
+def whiteish_checker
+  "\e[48;5;230m"
+end
+
+def brown_checker
+  "\e[48;5;94m"
+end
+
+def medium_brown_checker
+  "\e[48;5;137m"
+end
+
+def light_brown_checker
+  "\e[48;5;180m"
 end

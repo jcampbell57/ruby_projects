@@ -14,23 +14,36 @@ class Board
   def display_white
     8.times do |i|
       row = []
-      columns.each do |column|
-        row << column[1][7 - i]
+      columns.each_with_index do |(_column_letter, column), column_index|
+        background_color = if (i + column_index).even?
+                             medium_brown_checker
+                           else
+                             brown_checker
+                           end
+        cell_content = background_color + " \e[30m#{column[7 - i]} " + "\e[0m"
+        row << cell_content
       end
-      puts row.join(' ').prepend("  #{8 - i} ")
+      puts row.join('').prepend("  #{8 - i} ")
     end
-    puts '    a b c d e f g h'
+    puts '     a  b  c  d  e  f  g  h'
   end
 
   def display_black
     8.times do |i|
       row = []
-      columns.each do |column|
-        row << column[1][i]
+      reversed_columns = Hash[columns.to_a.reverse]
+      reversed_columns.each_with_index do |(_column_letter, column), column_index|
+        background_color = if (i + column_index).even?
+                             medium_brown_checker
+                           else
+                             brown_checker
+                           end
+        cell_content = background_color + " \e[30m#{column[i]} " + "\e[0m"
+        row << cell_content
       end
-      puts row.join(' ').prepend("  #{1 + i} ")
+      puts row.join('').prepend("  #{1 + i} ")
     end
-    puts '    h g f e d c b a'
+    puts '     h  g  f  e  d  c  b  a'
   end
 
   def create_board
@@ -45,35 +58,69 @@ class Board
   def set_pieces
     # pawns
     @columns.each do |column|
-      column[1][1] = '♙'
-      column[1][6] = '♟'
+      column[1][1] = "\e[97m♟"
+      column[1][6] = "\e[30m♟"
     end
 
     # rooks
-    @columns[:a][0] = '♖'
-    @columns[:a][7] = '♜'
-    @columns[:h][0] = '♖'
-    @columns[:h][7] = '♜'
+    @columns[:a][0] = "\e[97m♜"
+    @columns[:a][7] = "\e[30m♜"
+    @columns[:h][0] = "\e[97m♜"
+    @columns[:h][7] = "\e[30m♜"
 
     # knights
-    @columns[:b][0] = '♘'
-    @columns[:b][7] = '♞'
-    @columns[:g][0] = '♘'
-    @columns[:g][7] = '♞'
+    @columns[:b][0] = "\e[97m♞"
+    @columns[:b][7] = "\e[30m♞"
+    @columns[:g][0] = "\e[97m♞"
+    @columns[:g][7] = "\e[30m♞"
 
     # bishops
-    @columns[:c][0] = '♗'
-    @columns[:c][7] = '♝'
-    @columns[:f][0] = '♗'
-    @columns[:f][7] = '♝'
+    @columns[:c][0] = "\e[97m♝"
+    @columns[:c][7] = "\e[30m♝"
+    @columns[:f][0] = "\e[97m♝"
+    @columns[:f][7] = "\e[30m♝"
 
     # queens
-    @columns[:d][0] = '♕'
-    @columns[:d][7] = '♛'
+    @columns[:d][0] = "\e[97m♛"
+    @columns[:d][7] = "\e[30m♛"
 
     # kings
-    @columns[:e][0] = '♔'
-    @columns[:e][7] = '♚'
+    @columns[:e][0] = "\e[97m♚"
+    @columns[:e][7] = "\e[30m♚"
+  end
+
+  def old_set_pieces
+    # pawns
+    @columns.each do |column|
+      column[1][1] = "\e[97m♟"
+      column[1][6] = "\e[30m♜♟"
+    end
+
+    # rooks
+    @columns[:a][0] = "\e[97m♖"
+    @columns[:a][7] = "\e[30m♜"
+    @columns[:h][0] = "\e[97m♖"
+    @columns[:h][7] = "\e[30m♜"
+
+    # knights
+    @columns[:b][0] = "\e[97m♘"
+    @columns[:b][7] = "\e[30m♞"
+    @columns[:g][0] = "\e[97m♘"
+    @columns[:g][7] = "\e[30m♞"
+
+    # bishops
+    @columns[:c][0] = "\e[97m♗"
+    @columns[:c][7] = "\e[30m♝"
+    @columns[:f][0] = "\e[97m♗"
+    @columns[:f][7] = "\e[30m♝"
+
+    # queens
+    @columns[:d][0] = "\e[97m♕"
+    @columns[:d][7] = "\e[30m♛"
+
+    # kings
+    @columns[:e][0] = "\e[97m♔"
+    @columns[:e][7] = "\e[30m♚"
   end
 
   @visual_columns = {

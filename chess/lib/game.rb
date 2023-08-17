@@ -103,6 +103,9 @@ class Game
 
   def switch_turn
     @turn = @turn == 'white' ? 'black' : 'white'
+    return unless @mode == 2
+
+    @player = @player == 'white' ? 'black' : 'white'
   end
 
   def checkmate?

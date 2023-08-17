@@ -20,12 +20,14 @@ class Board
                            else
                              brown_checker
                            end
-        cell_content = background_color + " \e[30m#{column[7 - i]} " + "\e[0m"
+        cell_content = background_color + "   \e[30m#{column[7 - i]}   " + "\e[0m"
         row << cell_content
       end
+      insert_padding(i)
       puts row.join('').prepend("  #{8 - i} ")
+      insert_padding(i)
     end
-    puts '     a  b  c  d  e  f  g  h'
+    puts '       a      b      c      d      e      f      g      h'
   end
 
   def display_black
@@ -38,12 +40,40 @@ class Board
                            else
                              brown_checker
                            end
-        cell_content = background_color + " \e[30m#{column[i]} " + "\e[0m"
+        cell_content = background_color + "   \e[30m#{column[i]}   " + "\e[0m"
         row << cell_content
       end
+      insert_padding(i)
       puts row.join('').prepend("  #{1 + i} ")
+      insert_padding(i)
     end
-    puts '     h  g  f  e  d  c  b  a'
+    puts '     h      g      f      e      d      c      b      a'
+  end
+
+  def insert_padding(index)
+    if index.even?
+      puts padding_variant_one.prepend('    ')
+    else
+      puts padding_variant_two.prepend('    ')
+    end
+  end
+
+  def padding_variant_one
+    padding = String.new
+    4.times do
+      padding << medium_brown_checker + '       ' + "\e[0m"
+      padding << brown_checker + '       ' + "\e[0m"
+    end
+    padding
+  end
+
+  def padding_variant_two
+    padding = String.new
+    4.times do
+      padding << brown_checker + '       ' + "\e[0m"
+      padding << medium_brown_checker + '       ' + "\e[0m"
+    end
+    padding
   end
 
   def create_board

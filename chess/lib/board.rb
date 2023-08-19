@@ -2,25 +2,28 @@
 
 # lib/board.rb
 class Board
-  attr_accessor :columns
+  attr_accessor :squares, :coordinates
 
   require_relative 'colors'
 
-  def initialize(columns = create_board)
-    self.columns = columns
-    set_pieces
+  # @coordinates = create_coordinates
+
+  def initialize(coordinates = create_coordinates, squares = nil)
+    self.coordinates = coordinates
+    self.squares = squares.nil? ? create_squares : sqauares
   end
 
   def display_white
+    temp_squares = @squares.dup
     8.times do |i|
       row = []
-      columns.each_with_index do |(_column_letter, column), column_index|
-        background_color = if (i + column_index).even?
+      8.times do |j|
+        background_color = if (i + j).even?
                              medium_brown_checker
                            else
                              brown_checker
                            end
-        cell_content = background_color + "   \e[30m#{column[7 - i]}   " + "\e[0m"
+        cell_content = background_color + "   \e[30m#{temp_squares.shift}   " + "\e[0m"
         row << cell_content
       end
       insert_padding(i)
@@ -31,16 +34,22 @@ class Board
   end
 
   def display_black
-    8.times do |i|
+    # create rows
+    rows = []
+    temp_squares = @squares.dup
+    8.times do
+      rows << temp_squares.shift(8)
+    end
+    # print 8 rows
+    rows.reverse.each_with_index do |row_array, i|
       row = []
-      reversed_columns = Hash[columns.to_a.reverse]
-      reversed_columns.each_with_index do |(_column_letter, column), column_index|
-        background_color = if (i + column_index).even?
+      row_array.reverse.each_with_index do |square, j|
+        background_color = if (i + j).even?
                              medium_brown_checker
                            else
                              brown_checker
                            end
-        cell_content = background_color + "   \e[30m#{column[i]}   " + "\e[0m"
+        cell_content = background_color + "   \e[30m#{square}   " + "\e[0m"
         row << cell_content
       end
       insert_padding(i)
@@ -76,91 +85,69 @@ class Board
     padding
   end
 
-  def create_board
-    column_letters = (:a..:h).to_a
-    columns_hash = {}
-    column_letters.each do |letter|
-      columns_hash[letter] = Array.new(8, ' ')
+  def create_coordinates
+    coordinates = []
+    8.times do |i|
+      8.times do |j|
+        coordinates.push([i, j])
+      end
     end
-    columns_hash
+    coordinates
   end
 
-  def set_pieces
+  def create_squares
+    squares = []
+    8.times do
+      8.times do
+        squares.push(' ')
+      end
+    end
+    reset_pieces(squares)
+    squares
+  end
+
+  def reset_pieces(blank_board)
     # pawns
-    @columns.each do |column|
-      column[1][1] = "\e[97m♟"
-      column[1][6] = "\e[30m♟"
+    8.times do |i|
+      blank_board[@coordinates.find_index([6, i])] = "\e[97m♟"
+      blank_board[@coordinates.find_index([1, i])] = "\e[30m♟"
     end
 
     # rooks
-    @columns[:a][0] = "\e[97m♜"
-    @columns[:a][7] = "\e[30m♜"
-    @columns[:h][0] = "\e[97m♜"
-    @columns[:h][7] = "\e[30m♜"
+    blank_board[@coordinates.find_index([7, 0])] = "\e[97m♜"
+    blank_board[@coordinates.find_index([7, 7])] = "\e[97m♜"
+    blank_board[@coordinates.find_index([0, 0])] = "\e[30m♜"
+    blank_board[@coordinates.find_index([0, 7])] = "\e[30m♜"
 
     # knights
-    @columns[:b][0] = "\e[97m♞"
-    @columns[:b][7] = "\e[30m♞"
-    @columns[:g][0] = "\e[97m♞"
-    @columns[:g][7] = "\e[30m♞"
+    blank_board[@coordinates.find_index([7, 1])] = "\e[97m♞"
+    blank_board[@coordinates.find_index([7, 6])] = "\e[97m♞"
+    blank_board[@coordinates.find_index([0, 1])] = "\e[30m♞"
+    blank_board[@coordinates.find_index([0, 6])] = "\e[30m♞"
 
     # bishops
-    @columns[:c][0] = "\e[97m♝"
-    @columns[:c][7] = "\e[30m♝"
-    @columns[:f][0] = "\e[97m♝"
-    @columns[:f][7] = "\e[30m♝"
+    blank_board[@coordinates.find_index([7, 2])] = "\e[97m♝"
+    blank_board[@coordinates.find_index([7, 5])] = "\e[97m♝"
+    blank_board[@coordinates.find_index([0, 2])] = "\e[30m♝"
+    blank_board[@coordinates.find_index([0, 5])] = "\e[30m♝"
 
     # queens
-    @columns[:d][0] = "\e[97m♛"
-    @columns[:d][7] = "\e[30m♛"
+    blank_board[@coordinates.find_index([7, 3])] = "\e[97m♛"
+    blank_board[@coordinates.find_index([0, 3])] = "\e[30m♛"
 
     # kings
-    @columns[:e][0] = "\e[97m♚"
-    @columns[:e][7] = "\e[30m♚"
+    blank_board[@coordinates.find_index([7, 4])] = "\e[97m♚"
+    blank_board[@coordinates.find_index([0, 4])] = "\e[30m♚"
   end
 
-  def old_set_pieces
-    # pawns
-    @columns.each do |column|
-      column[1][1] = "\e[97m♟"
-      column[1][6] = "\e[30m♜♟"
-    end
-
-    # rooks
-    @columns[:a][0] = "\e[97m♖"
-    @columns[:a][7] = "\e[30m♜"
-    @columns[:h][0] = "\e[97m♖"
-    @columns[:h][7] = "\e[30m♜"
-
-    # knights
-    @columns[:b][0] = "\e[97m♘"
-    @columns[:b][7] = "\e[30m♞"
-    @columns[:g][0] = "\e[97m♘"
-    @columns[:g][7] = "\e[30m♞"
-
-    # bishops
-    @columns[:c][0] = "\e[97m♗"
-    @columns[:c][7] = "\e[30m♝"
-    @columns[:f][0] = "\e[97m♗"
-    @columns[:f][7] = "\e[30m♝"
-
-    # queens
-    @columns[:d][0] = "\e[97m♕"
-    @columns[:d][7] = "\e[30m♛"
-
-    # kings
-    @columns[:e][0] = "\e[97m♔"
-    @columns[:e][7] = "\e[30m♚"
-  end
-
-  @visual_columns = {
-    a: ['♖', '♙', ' ', ' ', ' ', ' ', '♟︎', '♜'],
-    b: ['♘', '♙', ' ', ' ', ' ', ' ', '♟︎', '♞'],
-    c: ['♗', '♙', ' ', ' ', ' ', ' ', '♟︎', '♝'],
-    d: ['♕', '♙', ' ', ' ', ' ', ' ', '♟︎', '♛'],
-    e: ['♔', '♙', ' ', ' ', ' ', ' ', '♟︎', '♚'],
-    f: ['♗', '♙', ' ', ' ', ' ', ' ', '♟︎', '♝'],
-    g: ['♘', '♙', ' ', ' ', ' ', ' ', '♟︎', '♞'],
-    h: ['♖', '♙', ' ', ' ', ' ', ' ', '♟︎', '♜']
-  }
+  @visual_squares = [
+    [0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7],
+    [1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7],
+    [2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7],
+    [3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7],
+    [4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7],
+    [5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7],
+    [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7],
+    [7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7]
+  ]
 end

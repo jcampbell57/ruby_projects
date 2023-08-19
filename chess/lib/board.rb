@@ -5,6 +5,7 @@ class Board
   attr_accessor :squares, :coordinates
 
   require_relative 'colors'
+  require_relative 'knight'
 
   # @coordinates = create_coordinates
 
@@ -89,7 +90,7 @@ class Board
     coordinates = []
     8.times do |i|
       8.times do |j|
-        coordinates.push([i, j])
+        coordinates.push([j, i])
       end
     end
     coordinates
@@ -109,45 +110,45 @@ class Board
   def reset_pieces(blank_board)
     # pawns
     8.times do |i|
-      blank_board[@coordinates.find_index([6, i])] = "\e[97m♟"
-      blank_board[@coordinates.find_index([1, i])] = "\e[30m♟"
+      blank_board[@coordinates.find_index([i, 6])] = "\e[97m♟"
+      blank_board[@coordinates.find_index([i, 1])] = "\e[30m♟"
     end
 
     # rooks
-    blank_board[@coordinates.find_index([7, 0])] = "\e[97m♜"
+    blank_board[@coordinates.find_index([0, 7])] = "\e[97m♜"
     blank_board[@coordinates.find_index([7, 7])] = "\e[97m♜"
     blank_board[@coordinates.find_index([0, 0])] = "\e[30m♜"
-    blank_board[@coordinates.find_index([0, 7])] = "\e[30m♜"
+    blank_board[@coordinates.find_index([7, 0])] = "\e[30m♜"
 
     # knights
-    blank_board[@coordinates.find_index([7, 1])] = "\e[97m♞"
-    blank_board[@coordinates.find_index([7, 6])] = "\e[97m♞"
-    blank_board[@coordinates.find_index([0, 1])] = "\e[30m♞"
-    blank_board[@coordinates.find_index([0, 6])] = "\e[30m♞"
+    blank_board[@coordinates.find_index([1, 7])] = Knight.new(@coordinates, [7, 1], 'white') # "\e[97m♞"
+    blank_board[@coordinates.find_index([6, 7])] = Knight.new(@coordinates, [7, 6], 'white') # "\e[97m♞"
+    blank_board[@coordinates.find_index([1, 0])] = Knight.new(@coordinates, [0, 1], 'black') # "\e[30m♞"
+    blank_board[@coordinates.find_index([6, 0])] = Knight.new(@coordinates, [0, 6], 'black') # "\e[30m♞"
 
     # bishops
-    blank_board[@coordinates.find_index([7, 2])] = "\e[97m♝"
-    blank_board[@coordinates.find_index([7, 5])] = "\e[97m♝"
-    blank_board[@coordinates.find_index([0, 2])] = "\e[30m♝"
-    blank_board[@coordinates.find_index([0, 5])] = "\e[30m♝"
+    blank_board[@coordinates.find_index([2, 7])] = "\e[97m♝"
+    blank_board[@coordinates.find_index([5, 7])] = "\e[97m♝"
+    blank_board[@coordinates.find_index([2, 0])] = "\e[30m♝"
+    blank_board[@coordinates.find_index([5, 0])] = "\e[30m♝"
 
     # queens
-    blank_board[@coordinates.find_index([7, 3])] = "\e[97m♛"
-    blank_board[@coordinates.find_index([0, 3])] = "\e[30m♛"
+    blank_board[@coordinates.find_index([3, 7])] = "\e[97m♛"
+    blank_board[@coordinates.find_index([3, 0])] = "\e[30m♛"
 
     # kings
-    blank_board[@coordinates.find_index([7, 4])] = "\e[97m♚"
-    blank_board[@coordinates.find_index([0, 4])] = "\e[30m♚"
+    blank_board[@coordinates.find_index([4, 7])] = "\e[97m♚"
+    blank_board[@coordinates.find_index([4, 0])] = "\e[30m♚"
   end
 
   @visual_squares = [
-    [0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7],
-    [1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7],
-    [2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7],
-    [3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7],
-    [4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7],
-    [5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7],
-    [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7],
-    [7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7]
+    [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0],
+    [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1],
+    [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2],
+    [0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3],
+    [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4],
+    [0, 5], [1, 5], [2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [7, 5],
+    [0, 6], [1, 6], [2, 6], [3, 6], [4, 6], [5, 6], [6, 6], [7, 6],
+    [0, 7], [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7], [7, 7]
   ]
 end

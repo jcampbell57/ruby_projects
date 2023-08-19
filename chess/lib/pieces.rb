@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 # lib/pieces.rb
+# class Pieces
+
+# end
+
 module Pieces
   # ♔ white king
   def white_king

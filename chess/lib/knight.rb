@@ -2,22 +2,20 @@
 
 # lib/knight.rb
 class Knight
-  attr_accessor :position, :parent, :children
+  attr_accessor :symbol, :position, :color, :adjacency_list, :children
 
-  # @@history = []
+  require_relative 'colors'
 
-  def initialize(position, parent, board = Board.new)
-    # reset history when given new move
-    # @@history = [] if parent.nil?
-    # @@history.push(position)
+  def initialize(coordinates, position, color)
+    # self.symbol = '♞'
     self.position = position
-    self.adjacency_list = build_adjacency_list
-    self.parent = parent
-    # self.children = board.adjacency_list[board.sqauares.find_index(position)].difference(@@history)
-    self.children = board.adjacency_list[board.sqauares.find_index(position)]
+    self.color = color
+    self.adjacency_list = build_adjacency_list(coordinates)
+    # self.parent = parent
+    self.children = adjacency_list[coordinates.find_index(position)]
   end
 
-  def possible_moves(square)
+  def possible_moves(square, coordinates)
     possibilities = [[square[0] + 2, square[1] + 1],
                      [square[0] + 2, square[1] - 1],
                      [square[0] - 2, square[1] + 1],
@@ -28,18 +26,22 @@ class Knight
                      [square[0] - 1, square[1] - 2]]
     confirmed = []
     possibilities.each do |possibility|
-      @sqauares.include?(possibility) ? confirmed << possibility : next
+      coordinates.include?(possibility) ? confirmed << possibility : next
     end
     confirmed
   end
 
-  def build_adjacency_list
+  def build_adjacency_list(coordinates)
     adjacency_list = {}
-    @sqauares.each_with_index do |square, index|
-      adjacency_list[index] = [] # do I need this?
-      adjacency_list[index] = possible_moves(square)
+    coordinates.each_with_index do |square, index|
+      # adjacency_list[index] = [] # do I need this?
+      adjacency_list[index] = possible_moves(square, coordinates)
     end
     adjacency_list
+  end
+
+  def to_s
+    color == 'white' ? white + '♞' : black + '♞'
   end
 
   # def knight_moves(start_position, end_position, board = Board.new)

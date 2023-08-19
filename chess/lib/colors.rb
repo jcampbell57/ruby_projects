@@ -109,3 +109,11 @@ end
 def light_brown_checker
   "\e[48;5;180m"
 end
+
+def white
+  "\e[97m"
+end
+
+def black
+  "\e30m"
+end

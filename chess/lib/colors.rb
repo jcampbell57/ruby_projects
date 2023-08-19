@@ -115,5 +115,5 @@ def white
 end
 
 def black
-  "\e30m"
+  "\e[30m"
 end

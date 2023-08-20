@@ -89,9 +89,18 @@ class Game
     input
   end
 
-  def verify_move(_input)
-    # return input if valid?
+  def verify_move(input)
+    # return input if valid
+    return input if input.to_s.size == 3 &&
+                    input[1].to_s.match(/[BKNPQR]/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/[1-8]/)
 
+    return input if input.to_s.size == 2 &&
+                    input[1].to_s.match(/[a-h]/) &&
+                    input[2].to_s.match(/[1-8]/)
+
+    # else
     puts 'Invalid input!'
     select_move
   end

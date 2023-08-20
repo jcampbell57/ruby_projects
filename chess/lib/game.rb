@@ -91,16 +91,146 @@ class Game
 
   def verify_move(input)
     # return input if valid
-    return input if input.to_s.size == 3 &&
-                    input[1].to_s.match(/[BKNPQR]/) &&
-                    input[2].to_s.match(/[a-h]/) &&
-                    input[3].to_s.match(/[1-8]/)
 
-    return input if input.to_s.size == 2 &&
+    # standard moves (ex: Be5, Nf3, c5):
+
+    return input if input.to_s.size == 3 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
                     input[1].to_s.match(/[a-h]/) &&
                     input[2].to_s.match(/[1-8]/)
 
+    return input if input.to_s.size == 2 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/[1-8]/)
+
+    # disambiguating moves (ex: Qh4e1, R1a3, Rdf8):
+
+    return input if input.to_s.size == 5 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/[a-h]/) &&
+                    input[2].to_s.match(/[1-8]/) &&
+                    input[3].to_s.match(/[a-h]/) &&
+                    input[4].to_s.match(/[1-8]/)
+
+    return input if input.to_s.size == 4 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/[a-h]/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/[1-8]/)
+
+    return input if input.to_s.size == 4 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/[1-8]/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/[1-8]/)
+
+    # pawn promotion moves (ex: e8Q, e8=Q, e8(Q), e8/Q):
+
+    return input if input.to_s.size == 5 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/8/) &&
+                    input[2].to_s.match(/[(]/) &&
+                    input[3].to_s.match(/[BNQR]/) &&
+                    input[4].to_s.match(/[)]/)
+
+    return input if input.to_s.size == 4 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/8/) &&
+                    input[2].to_s.match(%r{[=/]}) &&
+                    input[3].to_s.match(/[BNQR]/)
+
+    return input if input.to_s.size == 3 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/8/) &&
+                    input[2].to_s.match(/[BNQR]/)
+
+    # pawn promotion capture moves (ex: dxe8Q, dxe8=Q, dxe8(Q), dxe8/Q):
+
+    return input if input.to_s.size == 7 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/x/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/8/) &&
+                    input[4].to_s.match(/[(]/) &&
+                    input[5].to_s.match(/[BNQR]/) &&
+                    input[6].to_s.match(/[)]/)
+
+    return input if input.to_s.size == 6 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/x/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/8/) &&
+                    input[4].to_s.match(%r{[=/]}) &&
+                    input[5].to_s.match(/[BNQR]/)
+
+    return input if input.to_s.size == 5 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/x/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/8/) &&
+                    input[4].to_s.match(/[BNQR]/)
+
+    # capture moves (ex: Qh4xe1, R1xa3, Rdxf8, Bxe5, Nxf3, exd6):
+
+    return input if input.to_s.size == 6 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/[a-h]/) &&
+                    input[2].to_s.match(/[1-8]/) &&
+                    input[3].to_s.match(/x/) &&
+                    input[4].to_s.match(/[a-h]/) &&
+                    input[5].to_s.match(/[1-8]/)
+
+    return input if input.to_s.size == 5 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/[a-h]/) &&
+                    input[2].to_s.match(/x/) &&
+                    input[3].to_s.match(/[a-h]/) &&
+                    input[4].to_s.match(/[1-8]/)
+
+    return input if input.to_s.size == 5 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/[1-8]/) &&
+                    input[2].to_s.match(/x/) &&
+                    input[3].to_s.match(/[a-h]/) &&
+                    input[4].to_s.match(/[1-8]/)
+
+    return input if input.to_s.size == 4 &&
+                    input[0].to_s.match(/[BKNPQR]/) &&
+                    input[1].to_s.match(/x/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/[1-8]/)
+
+    return input if input.to_s.size == 4 &&
+                    input[0].to_s.match(/[a-h]/) &&
+                    input[1].to_s.match(/x/) &&
+                    input[2].to_s.match(/[a-h]/) &&
+                    input[3].to_s.match(/[1-8]/)
+
+    # castling moves (eX: Kg1, Kb8):
+
+    return input if input.to_s.size == 5 &&
+                    input[0].to_s.match(/[0O]/) &&
+                    input[1].to_s.match(/-/) &&
+                    input[0].to_s.match(/[0O]/) &&
+                    input[1].to_s.match(/-/) &&
+                    input[2].to_s.match(/0O/)
+
+    return input if input.to_s.size == 3 &&
+                    input[0].to_s.match(/[0O]/) &&
+                    input[1].to_s.match(/-/) &&
+                    input[2].to_s.match(/0O/)
+
+    return input if input.to_s.size == 3 &&
+                    input[0].to_s.match(/K/) &&
+                    input[1].to_s.match(/[bg]/) &&
+                    input[2].to_s.match(/18/)
+
+    # still need to add:
+    # check moves (ex: anything above with "+" or "ch" at the end):
+    # checkmate moves (ex: anything above with "#" or "mate" at the end):
+
     # else
+
     puts 'Invalid input!'
     select_move
   end

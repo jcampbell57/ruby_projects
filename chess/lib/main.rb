@@ -4,10 +4,16 @@
 require_relative 'game'
 game = Game.new
 
-# play game
-game.play
+# play game:
+# game.play
 
-# display board
+# move piece
+piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
+game.display_board
+game.place_piece(piece, 2, 5)
+game.display_board
+
+# display board:
 # puts "board from white's perspective: "
 # game.turn = 'white'
 # game.display_board

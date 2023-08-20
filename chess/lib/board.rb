@@ -121,10 +121,10 @@ class Board
     blank_board[@coordinates.find_index([7, 0])] = "\e[30m♜"
 
     # knights
-    blank_board[@coordinates.find_index([1, 7])] = Knight.new(@coordinates, [7, 1], 'white') # "\e[97m♞"
-    blank_board[@coordinates.find_index([6, 7])] = Knight.new(@coordinates, [7, 6], 'white') # "\e[97m♞"
-    blank_board[@coordinates.find_index([1, 0])] = Knight.new(@coordinates, [0, 1], 'black') # "\e[30m♞"
-    blank_board[@coordinates.find_index([6, 0])] = Knight.new(@coordinates, [0, 6], 'black') # "\e[30m♞"
+    blank_board[@coordinates.find_index([1, 7])] = Knight.new(@coordinates, [1, 7], 'white') # "\e[97m♞"
+    blank_board[@coordinates.find_index([6, 7])] = Knight.new(@coordinates, [6, 7], 'white') # "\e[97m♞"
+    blank_board[@coordinates.find_index([1, 0])] = Knight.new(@coordinates, [1, 0], 'black') # "\e[30m♞"
+    blank_board[@coordinates.find_index([6, 0])] = Knight.new(@coordinates, [6, 0], 'black') # "\e[30m♞"
 
     # bishops
     blank_board[@coordinates.find_index([2, 7])] = "\e[97m♝"

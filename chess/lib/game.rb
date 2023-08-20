@@ -71,7 +71,7 @@ class Game
         input = gets.chomp.to_i
       else
         puts "Computer's turn!"
-        # print 'The computer chooses: '
+        print 'The computer chooses: '
         # sleep(1)
         # input = nil
       end
@@ -236,8 +236,19 @@ class Game
   end
 
   def place_piece(piece, new_column_index, new_row_index)
-    # @board[piece.column][piece.row] = nil
-    # @board[new_column_index][new_row_index] = piece
+    # remove from previous position
+    board.squares[board.coordinates.find_index(piece.position)] = ' '
+    # place in new position
+    board.squares[board.coordinates.find_index([new_column_index, new_row_index])] = piece.to_s
+    piece.position = [new_column_index, new_row_index]
+  end
+
+  def eliminate_piece(piece)
+    # remove piece from board
+    board[board.find_index(piece.position)] = ' '
+    piece.position = nil
+    # add piece to appropriate player's collection
+    piece.color == 'white' ? white_captured << piece.to_s : black_captured << piece.to_s
   end
 
   def switch_turn

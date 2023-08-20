@@ -5,12 +5,17 @@ class Board
   attr_accessor :squares, :coordinates
 
   require_relative 'colors'
+  require_relative 'bishop'
+  require_relative 'king'
   require_relative 'knight'
+  require_relative 'pawn'
+  require_relative 'queen'
+  require_relative 'rook'
 
   # @coordinates = create_coordinates
 
-  def initialize(coordinates = create_coordinates, squares = nil)
-    self.coordinates = coordinates
+  def initialize(squares = nil)
+    self.coordinates = create_coordinates
     self.squares = squares.nil? ? create_squares : sqauares
   end
 

@@ -7,10 +7,16 @@ game = Game.new
 # play game:
 # game.play
 
-# move piece
+# move piece:
+# piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
+# game.display_board
+# game.place_piece(piece, 2, 5)
+# game.display_board
+
+# eliminate piece:
 piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
 game.display_board
-game.place_piece(piece, 2, 5)
+game.eliminate_piece(piece)
 game.display_board
 
 # display board:

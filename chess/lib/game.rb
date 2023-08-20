@@ -2,17 +2,24 @@
 
 # lib/game.rb
 class Game
-  attr_accessor :board, :mode, :player, :turn
+  attr_accessor :board, :mode, :player, :turn, :white_captured, :black_captured
 
   require_relative 'board'
   require_relative 'pieces'
   include Pieces
 
-  def initialize(board = Board.new, mode = nil, player = 'white', turn = 'white')
+  def initialize(board = Board.new,
+                 mode = nil,
+                 player = 'white',
+                 turn = 'white',
+                 white_captured = [],
+                 black_captured = [])
     self.board = board
     self.mode = mode
     self.player = player
     self.turn = turn
+    self.white_captured = white_captured
+    self.black_captured = black_captured
   end
 
   def play
@@ -245,7 +252,7 @@ class Game
 
   def eliminate_piece(piece)
     # remove piece from board
-    board[board.find_index(piece.position)] = ' '
+    board.squares[board.coordinates.find_index(piece.position)] = ' '
     piece.position = nil
     # add piece to appropriate player's collection
     piece.color == 'white' ? white_captured << piece.to_s : black_captured << piece.to_s

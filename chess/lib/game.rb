@@ -80,6 +80,7 @@ class Game
         puts "Computer's turn!"
         print 'The computer chooses: '
         # sleep(1)
+        puts ''
         # input = nil
       end
       # place_piece(verify_move(input))

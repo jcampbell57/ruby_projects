@@ -115,15 +115,15 @@ class Board
   def reset_pieces(blank_board)
     # pawns
     8.times do |i|
-      blank_board[@coordinates.find_index([i, 6])] = "\e[97m♟"
-      blank_board[@coordinates.find_index([i, 1])] = "\e[30m♟"
+      blank_board[@coordinates.find_index([i, 6])] = Pawn.new(@coordinates, [i, 6], 'white') # "\e[97m♟"
+      blank_board[@coordinates.find_index([i, 1])] = Pawn.new(@coordinates, [i, 1], 'black') # "\e[30m♟"
     end
 
     # rooks
-    blank_board[@coordinates.find_index([0, 7])] = "\e[97m♜"
-    blank_board[@coordinates.find_index([7, 7])] = "\e[97m♜"
-    blank_board[@coordinates.find_index([0, 0])] = "\e[30m♜"
-    blank_board[@coordinates.find_index([7, 0])] = "\e[30m♜"
+    blank_board[@coordinates.find_index([0, 7])] = Rook.new(@coordinates, [0, 7], 'white') # "\e[97m♜"
+    blank_board[@coordinates.find_index([7, 7])] = Rook.new(@coordinates, [7, 7], 'white') # "\e[97m♜"
+    blank_board[@coordinates.find_index([0, 0])] = Rook.new(@coordinates, [0, 0], 'black') # "\e[30m♜"
+    blank_board[@coordinates.find_index([7, 0])] = Rook.new(@coordinates, [7, 0], 'black') # "\e[30m♜"
 
     # knights
     blank_board[@coordinates.find_index([1, 7])] = Knight.new(@coordinates, [1, 7], 'white') # "\e[97m♞"
@@ -132,18 +132,18 @@ class Board
     blank_board[@coordinates.find_index([6, 0])] = Knight.new(@coordinates, [6, 0], 'black') # "\e[30m♞"
 
     # bishops
-    blank_board[@coordinates.find_index([2, 7])] = "\e[97m♝"
-    blank_board[@coordinates.find_index([5, 7])] = "\e[97m♝"
-    blank_board[@coordinates.find_index([2, 0])] = "\e[30m♝"
-    blank_board[@coordinates.find_index([5, 0])] = "\e[30m♝"
+    blank_board[@coordinates.find_index([2, 7])] = Bishop.new(@coordinates, [2, 7], 'white') # "\e[97m♝"
+    blank_board[@coordinates.find_index([5, 7])] = Bishop.new(@coordinates, [5, 7], 'white') # "\e[97m♝"
+    blank_board[@coordinates.find_index([2, 0])] = Bishop.new(@coordinates, [2, 0], 'black') # "\e[30m♝"
+    blank_board[@coordinates.find_index([5, 0])] = Bishop.new(@coordinates, [5, 0], 'black') # "\e[30m♝"
 
     # queens
-    blank_board[@coordinates.find_index([3, 7])] = "\e[97m♛"
-    blank_board[@coordinates.find_index([3, 0])] = "\e[30m♛"
+    blank_board[@coordinates.find_index([3, 7])] = Queen.new(@coordinates, [3, 7], 'white') # "\e[97m♛"
+    blank_board[@coordinates.find_index([3, 0])] = Queen.new(@coordinates, [3, 0], 'black') # "\e[30m♛"
 
     # kings
-    blank_board[@coordinates.find_index([4, 7])] = "\e[97m♚"
-    blank_board[@coordinates.find_index([4, 0])] = "\e[30m♚"
+    blank_board[@coordinates.find_index([4, 7])] = King.new(@coordinates, [4, 7], 'white') # "\e[97m♚"
+    blank_board[@coordinates.find_index([4, 0])] = King.new(@coordinates, [4, 0], 'black') # "\e[30m♚"
   end
 
   @visual_squares = [

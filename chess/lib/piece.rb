@@ -4,7 +4,7 @@
 class Piece
   attr_accessor :position, :color
 
-  require_relative 'colors'
+  # require_relative 'colors'
 
   def initialize(position, color)
     self.position = position

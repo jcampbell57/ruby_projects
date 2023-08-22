@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
+require_relative 'piece'
+
 # lib/pawn.rb
-class Pawn
+class Pawn < Piece
   attr_accessor :position, :color, :adjacency_list, :children
 
   require_relative 'colors'
 
   def initialize(coordinates, position, color)
-    self.position = position
-    self.color = color
+    super(position, color)
     self.adjacency_list = build_adjacency_list(coordinates)
     self.children = adjacency_list[coordinates.find_index(position)]
   end

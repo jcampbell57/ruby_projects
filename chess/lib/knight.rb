@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
+require_relative 'piece'
+
 # lib/knight.rb
-class Knight
-  attr_accessor :symbol, :position, :color, :adjacency_list, :children
+class Knight < Piece
+  attr_accessor :position, :color, :adjacency_list, :children
 
   require_relative 'colors'
 
   def initialize(coordinates, position, color)
-    # self.symbol = '♞'
-    self.position = position
-    self.color = color
+    super(position, color)
     self.adjacency_list = build_adjacency_list(coordinates)
-    # self.parent = parent
     self.children = adjacency_list[coordinates.find_index(position)]
   end
 

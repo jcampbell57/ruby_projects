@@ -4,8 +4,8 @@
 require_relative 'game'
 game = Game.new
 
-# play game:
-game.play
+# new game:
+game.new_game
 
 # move piece:
 # piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
@@ -14,9 +14,13 @@ game.play
 # game.display_board
 
 # eliminate piece:
-# piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
+# piece1 = game.board.squares[game.board.coordinates.find_index([1, 7])]
+# piece2 = game.board.squares[game.board.coordinates.find_index([3, 7])]
+# piece3 = game.board.squares[game.board.coordinates.find_index([7, 6])]
 # game.display_board
-# game.eliminate_piece(piece)
+# game.eliminate_piece(piece1)
+# game.eliminate_piece(piece2)
+# game.eliminate_piece(piece3)
 # game.display_board
 
 # display board:
@@ -26,4 +30,5 @@ game.play
 # puts
 # puts "board from black's perspective: "
 # game.turn = 'black'
+# game.player = 'black'
 # game.display_board

@@ -2,30 +2,76 @@
 
 # lib/game.rb
 class Game
-  attr_accessor :board, :mode, :player, :turn, :white_captured, :black_captured
+  attr_accessor :board, :mode, :player, :turn, :pieces
 
   require_relative 'board'
+  require_relative 'bishop'
+  require_relative 'king'
+  require_relative 'knight'
+  require_relative 'pawn'
+  require_relative 'queen'
+  require_relative 'rook'
+
   require_relative 'piece'
-  include Piece
-  
+  # include Piece
+
   def initialize(board = Board.new,
+                 pieces = nil,
                  mode = nil,
                  player = 'white',
-                 turn = 'white',
-                 white_captured = [],
-                 black_captured = [])
+                 turn = 'white')
     self.board = board
+    self.pieces = pieces.nil? ? create_pieces : pieces
     self.mode = mode
     self.player = player
     self.turn = turn
-    self.white_captured = white_captured
-    self.black_captured = black_captured
+    @board.set(@pieces)
   end
 
-  def play
+  def new_game
+    # @pieces = create_pieces
     @mode = select_mode
     @player = select_color if @mode == 1
     turn_loop
+  end
+
+  def create_pieces
+    pieces_array = []
+
+    # create pawns
+    8.times do |i|
+      pieces_array << Pawn.new(@board.coordinates, [i, 6], 'white') # "\e[97m♟"
+      pieces_array << Pawn.new(@board.coordinates, [i, 1], 'black') # "\e[30m♟"
+    end
+
+    # create rooks
+    pieces_array << Rook.new(@board.coordinates, [0, 7], 'white') # "\e[97m♜"
+    pieces_array << Rook.new(@board.coordinates, [7, 7], 'white') # "\e[97m♜"
+    pieces_array << Rook.new(@board.coordinates, [0, 0], 'black') # "\e[30m♜"
+    pieces_array << Rook.new(@board.coordinates, [7, 0], 'black') # "\e[30m♜"
+
+    # create knights
+    pieces_array << Knight.new(@board.coordinates, [1, 7], 'white') # "\e[97m♞"
+    pieces_array << Knight.new(@board.coordinates, [6, 7], 'white') # "\e[97m♞"
+    pieces_array << Knight.new(@board.coordinates, [1, 0], 'black') # "\e[30m♞"
+    pieces_array << Knight.new(@board.coordinates, [6, 0], 'black') # "\e[30m♞"
+
+    # create bishops
+    pieces_array << Bishop.new(@board.coordinates, [2, 7], 'white') # "\e[97m♝"
+    pieces_array << Bishop.new(@board.coordinates, [5, 7], 'white') # "\e[97m♝"
+    pieces_array << Bishop.new(@board.coordinates, [2, 0], 'black') # "\e[30m♝"
+    pieces_array << Bishop.new(@board.coordinates, [5, 0], 'black') # "\e[30m♝"
+
+    # create queens
+    pieces_array << Queen.new(@board.coordinates, [3, 7], 'white') # "\e[97m♛"
+    pieces_array << Queen.new(@board.coordinates, [3, 0], 'black') # "\e[30m♛"
+
+    # create kings
+    pieces_array << King.new(@board.coordinates, [4, 7], 'white') # "\e[97m♚"
+    pieces_array << King.new(@board.coordinates, [4, 0], 'black') # "\e[30m♚"
+
+    # return
+    pieces_array
   end
 
   def select_mode
@@ -289,19 +335,15 @@ class Game
   end
 
   def place_piece(piece, new_column_index, new_row_index)
-    # remove from previous position
-    board.squares[board.coordinates.find_index(piece.position)] = ' '
-    # place in new position
-    board.squares[board.coordinates.find_index([new_column_index, new_row_index])] = piece.to_s
     piece.position = [new_column_index, new_row_index]
+    @board.reset_squares
+    @board.set(@pieces)
   end
 
   def eliminate_piece(piece)
-    # remove piece from board
-    board.squares[board.coordinates.find_index(piece.position)] = ' '
     piece.position = nil
-    # add piece to appropriate player's collection
-    piece.color == 'white' ? white_captured << piece.to_s : black_captured << piece.to_s
+    @board.reset_squares
+    @board.set(@pieces)
   end
 
   def switch_turn

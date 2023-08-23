@@ -13,6 +13,8 @@ class Game
   require_relative 'queen'
   require_relative 'rook'
 
+  include ProcessMoves
+
   def initialize(board = Board.new,
                  pieces = nil,
                  mode = nil,
@@ -119,48 +121,65 @@ class Game
       if @turn == @player
         puts 'Your turn!'
         print 'Input: '
-        input = gets.chomp.to_i
+        input = gets.chomp
       else
         puts "Computer's turn!"
         print 'The computer chooses: '
         # sleep(1)
         puts ''
         # input = nil
+        return
       end
-      # place_piece(verify_move(input))
     elsif @mode == 2
-      if @turn == @player
-        puts "White's turn!"
-      else
-        puts "Black's turn!"
-      end
+      puts @turn == @player ? "White's turn!" : "Black's turn!"
       print 'Input: '
-      input = gets.chomp.to_i
-      place_piece(verify_move(input))
+      input = gets.chomp
     end
-    input
+    verify_move(input)
   end
 
   def verify_move(input)
-    # return [piece, column, row] if valid input
-    process_standard_move(input) if valid_standard_move?(input)
-    process_disambiguating_move(input) if valid_disambiguating_move?(input)
-    process_pawn_promotion_move(input) if valid_pawn_promotion_move?(input)
-    process_pawn_promotion_capture_move(input) if valid_pawn_promotion_capture_move?(input)
-    process_capture_move(input) if valid_capture_move?(input)
-    process_castling_move(input) if valid_castling_move?(input)
-
-    # still need to add:
-    # check moves (ex: anything above with "+" or "ch" at the end):
-    # checkmate moves (ex: anything above with "#" or "mate" at the end):
-
-    # else
-    puts 'Invalid input!'
-    select_move
+    loop do
+      if valid_move?(input, self)
+        place_piece(process_move(input))
+        break
+      else
+        print 'Invalid input! Try again: '
+        input = gets.chomp
+      end
+    end
   end
 
-  def place_piece(piece, new_column_index, new_row_index)
+  def process_move(input)
+    # return [piece, column, row] if valid input
+    if valid_standard_move?(input, self)
+      process_standard_move(input, self)
+    elsif valid_disambiguating_move?(input, self)
+      process_disambiguating_move(input, self)
+    elsif valid_pawn_promotion_move?(input, self)
+      process_pawn_promotion_move(input, self)
+    elsif valid_pawn_promotion_capture_move?(input, self)
+      process_pawn_promotion_capture_move(input, self)
+    elsif valid_capture_move?(input, self)
+      process_capture_move(input, self)
+    elsif valid_castling_move?(input, self)
+      process_castling_move(input, self)
+    else
+
+      # else
+      puts 'Error3045'
+    end
+  end
+
+  def place_piece(input_array)
+    # assign values from array
+    piece = input_array[0]
+    new_column_index = input_array[1]
+    new_row_index = input_array[2]
+
+    # place piece
     piece.position = [new_column_index, new_row_index]
+    piece.children = piece.adjacency_list[board.coordinates.find_index(piece.position)]
     @board.reset_squares
     @board.set(@pieces)
   end

@@ -5,13 +5,20 @@ require_relative 'game'
 game = Game.new
 
 # new game:
-# game.new_game
+game.new_game
+
+# make rspec tests of the things below this line:
+
+# game pieces:
+# game.pieces.each do |piece|
+#   puts piece.is_a?(Pawn)
+# end
 
 # move piece:
-piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
-game.display_board
-game.place_piece(piece, 2, 5)
-game.display_board
+# piece = game.board.squares[game.board.coordinates.find_index([1, 7])]
+# game.display_board
+# game.place_piece(piece, 2, 5)
+# game.display_board
 
 # eliminate piece:
 # piece1 = game.board.squares[game.board.coordinates.find_index([1, 7])]

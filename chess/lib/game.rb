@@ -37,41 +37,52 @@ class Game
 
   def create_pieces
     pieces_array = []
+    create_pawns(pieces_array)
+    create_rooks(pieces_array)
+    create_knights(pieces_array)
+    create_bishops(pieces_array)
+    create_queens(pieces_array)
+    create_kings(pieces_array)
+    # return
+    pieces_array
+  end
 
-    # create pawns
+  def create_pawns(pieces_array)
     8.times do |i|
       pieces_array << Pawn.new(@board.coordinates, [i, 6], 'white') # "\e[97m♟"
       pieces_array << Pawn.new(@board.coordinates, [i, 1], 'black') # "\e[30m♟"
     end
+  end
 
-    # create rooks
+  def create_rooks(pieces_array)
     pieces_array << Rook.new(@board.coordinates, [0, 7], 'white') # "\e[97m♜"
     pieces_array << Rook.new(@board.coordinates, [7, 7], 'white') # "\e[97m♜"
     pieces_array << Rook.new(@board.coordinates, [0, 0], 'black') # "\e[30m♜"
     pieces_array << Rook.new(@board.coordinates, [7, 0], 'black') # "\e[30m♜"
+  end
 
-    # create knights
+  def create_knights(pieces_array)
     pieces_array << Knight.new(@board.coordinates, [1, 7], 'white') # "\e[97m♞"
     pieces_array << Knight.new(@board.coordinates, [6, 7], 'white') # "\e[97m♞"
     pieces_array << Knight.new(@board.coordinates, [1, 0], 'black') # "\e[30m♞"
     pieces_array << Knight.new(@board.coordinates, [6, 0], 'black') # "\e[30m♞"
+  end
 
-    # create bishops
+  def create_bishops(pieces_array)
     pieces_array << Bishop.new(@board.coordinates, [2, 7], 'white') # "\e[97m♝"
     pieces_array << Bishop.new(@board.coordinates, [5, 7], 'white') # "\e[97m♝"
     pieces_array << Bishop.new(@board.coordinates, [2, 0], 'black') # "\e[30m♝"
     pieces_array << Bishop.new(@board.coordinates, [5, 0], 'black') # "\e[30m♝"
+  end
 
-    # create queens
+  def create_queens(pieces_array)
     pieces_array << Queen.new(@board.coordinates, [3, 7], 'white') # "\e[97m♛"
     pieces_array << Queen.new(@board.coordinates, [3, 0], 'black') # "\e[30m♛"
+  end
 
-    # create kings
+  def create_kings(pieces_array)
     pieces_array << King.new(@board.coordinates, [4, 7], 'white') # "\e[97m♚"
     pieces_array << King.new(@board.coordinates, [4, 0], 'black') # "\e[30m♚"
-
-    # return
-    pieces_array
   end
 
   def select_mode
@@ -115,60 +126,62 @@ class Game
     @player == 'white' ? @board.display_white : @board.display_black
   end
 
+  def get_input(prompt)
+    print prompt
+    gets.chomp
+  end
+
   def select_move
     if @mode == 1
-      input = nil
-      if @turn == @player
-        puts 'Your turn!'
-        print 'Input: '
-        input = gets.chomp
-      else
-        puts "Computer's turn!"
-        print 'The computer chooses: '
-        # sleep(1)
-        puts ''
-        # input = nil
-        return
-      end
+      return computer_move unless @turn == @player
+
+      input_prompt = 'Your turn! Input: '
     elsif @mode == 2
-      puts @turn == @player ? "White's turn!" : "Black's turn!"
-      print 'Input: '
-      input = gets.chomp
+      input_prompt = @turn == @player ? "White's turn! Input: " : "Black's turn! Input: "
     end
+    input = get_input(input_prompt)
     verify_move(input)
   end
 
   def verify_move(input)
     loop do
-      if valid_move?(input, self)
-        place_piece(process_move(input))
-        break
+      result = process_move(input)
+      if result.nil?
+        input = get_input('Invalid input! Try again: ')
       else
-        print 'Invalid input! Try again: '
-        input = gets.chomp
+        place_piece(result)
+        break
       end
     end
   end
 
   def process_move(input)
-    # return [piece, column, row] if valid input
-    if valid_standard_move?(input, self)
-      process_standard_move(input, self)
-    elsif valid_disambiguating_move?(input, self)
-      process_disambiguating_move(input, self)
-    elsif valid_pawn_promotion_move?(input, self)
-      process_pawn_promotion_move(input, self)
-    elsif valid_pawn_promotion_capture_move?(input, self)
-      process_pawn_promotion_capture_move(input, self)
-    elsif valid_capture_move?(input, self)
-      process_capture_move(input, self)
-    elsif valid_castling_move?(input, self)
-      process_castling_move(input, self)
-    else
+    methods_to_check = %i[
+      valid_standard_move?
+      valid_disambiguating_move?
+      valid_pawn_promotion_move?
+      valid_pawn_promotion_capture_move?
+      valid_capture_move?
+      valid_castling_move?
+    ]
 
-      # else
-      puts 'Error3045'
+    methods_to_check.each do |method|
+      result, result_array = send(method, input, self)
+      return result_array if result == true
     end
+
+    nil # Return nil if none of the conditions are met
+  end
+
+  def computer_move
+    puts "Computer's turn! The computer chooses: "
+    # print "Computer's turn! The computer chooses: "
+    # 3.times do
+    #   sleep(1)
+    #   print '.'
+    # end
+    # computer_input =
+    # verify_move(computer_input)
   end
 
   def place_piece(input_array)
@@ -217,12 +230,8 @@ class Game
     display_board
     if @turn == 'white' && @mode == 1
       puts 'You win!'
-    elsif @turn == 'black' && @mode == 1
-      puts 'Better luck next time!'
-    elsif @turn == 'white' && @mode == 2
-      puts 'White wins!'
-    elsif @turn == 'black' && @mode == 2
-      puts 'Black wins!'
+    else
+      puts "#{@turn.capitalize} wins!"
     end
   end
 

@@ -9,60 +9,23 @@ module ProcessMoves
   # checkmate moves (ex: anything above with "#" or "mate" at the end):
   # need to stop bishop/rook and other pieces from moving if other piece is in the way.
 
-  def valid_move?(input, game)
-    return true if
-      valid_standard_move?(input, game) == true
-    # valid_disambiguating_move?(input, _game) == true ||
-    # valid_pawn_promotion_move?(input, _game) == true ||
-    # valid_pawn_promotion_capture_move?(input, _game) == true ||
-    # valid_capture_move?(input, _game) == true ||
-    # valid_castling_move?(input, _game) == true
-  end
-
   # standard moves (ex: Be5, Nf3, c5):
   def valid_standard_move?(input, game)
-    return if input.nil?
+    return false, [] if input.nil?
 
     # check to see if input matches syntax
     first_match = input.to_s.match(/\A[BKNPQR][a-h][1-8]\z/)&.[](0)
     second_match = input.to_s.match(/\A[a-h][1-8]\z/)&.[](0)
+    return false, [] unless first_match == input || second_match == input
 
-    # check to see if a piece is able to move to target square
-    if first_match == input || second_match == input
-      column = column_index(input[-2])
-      row = 8 - input[-1].to_i
-      piece = nil
-      if input.to_s.size == 3
-        piece_class = translate_class(input[0])
-        game.pieces.each do |board_piece|
-          next unless board_piece.is_a?(piece_class) &&
-                      board_piece.color == game.turn &&
-                      board_piece.children.include?([column, row])
+    # process move
+    result_array = process_standard_move(input, game)
 
-          piece = board_piece
-          break
-        end
-      elsif input.to_s.size == 2
-        # check for pawn position if moving 2 spaces is possible
-        if game.turn == 'white'
-          row_three_square = game.board.squares[game.board.coordinates.find_index([column, 5])]
-          piece = if row == 4 && row_three_square.is_a?(Pawn) == false
-                    game.board.squares[game.board.coordinates.find_index([column, 6])]
-                  else
-                    game.board.squares[game.board.coordinates.find_index([column, row + 1])]
-                  end
-        elsif game.turn == 'black'
-          piece = if row == 3 && game.board.squares[game.board.coordinates.find_index([column, 2])] == ' '
-                    game.board.squares[game.board.coordinates.find_index([column, 1])]
-                  else
-                    game.board.squares[game.board.coordinates.find_index([column, row - 1])]
-                  end
-        end
-      end
-      return if piece.nil?
-    end
+    # return false if piece is not able to move to target square
+    return false, [] if result_array[0].nil?
 
-    return true if first_match == input || second_match == input
+    [true, result_array]
+    # return true if first_match == input || second_match == input
   end
 
   def process_standard_move(input, game)
@@ -79,10 +42,6 @@ module ProcessMoves
         piece = board_piece
         break
       end
-      # if piece.nil?
-
-      # end
-      # game.board.squares[game.board.coordinates.find_index([column, 3])]
       [piece, column, row]
     elsif input.to_s.size == 2
       # check for pawn position if moving 2 spaces is possible

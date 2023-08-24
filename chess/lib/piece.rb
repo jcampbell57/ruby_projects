@@ -12,6 +12,8 @@ class Piece
   end
 
   def update_children(board)
+    return nil if position.nil?
+
     children = []
     adjacency_list[board.coordinates.find_index(position)].each do |child|
       # do not include squares with same color pieces

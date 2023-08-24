@@ -201,7 +201,7 @@ class Game
     piece.position = [new_column_index, new_row_index]
     @board.reset_squares
     @board.set(@pieces)
-    piece.children = piece.update_children(@board)
+    @pieces.each { |board_piece| board_piece.children = board_piece.update_children(@board) }
   end
 
   def eliminate_piece(piece)

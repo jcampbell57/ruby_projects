@@ -10,6 +10,16 @@ class Piece
     self.position = position
     self.color = color
   end
+
+  def update_children(board)
+    children = []
+    adjacency_list[board.coordinates.find_index(position)].each do |child|
+      # do not include squares with same color pieces
+      target_square = board.squares[board.coordinates.find_index(child)]
+      children << child unless target_square != ' ' && target_square.color == color
+    end
+    children
+  end
 end
 
 # module Piece

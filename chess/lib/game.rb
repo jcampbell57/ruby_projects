@@ -21,15 +21,14 @@ class Game
                  player = 'white',
                  turn = 'white')
     self.board = board
-    self.pieces = pieces.nil? ? create_pieces : pieces
+    self.pieces = pieces
     self.mode = mode
     self.player = player
     self.turn = turn
-    @board.set(@pieces)
   end
 
   def new_game
-    # @pieces = create_pieces
+    @pieces = create_pieces
     @mode = select_mode
     @player = select_color if @mode == 1
     turn_loop
@@ -38,51 +37,55 @@ class Game
   def create_pieces
     pieces_array = []
     create_pawns(pieces_array)
-    create_rooks(pieces_array)
     create_knights(pieces_array)
     create_bishops(pieces_array)
+    create_rooks(pieces_array)
     create_queens(pieces_array)
     create_kings(pieces_array)
+    @board.set(pieces_array)
+
+    pieces_array.each { |piece| piece.children = piece.update_children(@board) }
+
     # return
     pieces_array
   end
 
   def create_pawns(pieces_array)
     8.times do |i|
-      pieces_array << Pawn.new(@board.coordinates, [i, 6], 'white') # "\e[97m♟"
-      pieces_array << Pawn.new(@board.coordinates, [i, 1], 'black') # "\e[30m♟"
+      pieces_array << Pawn.new(@board, [i, 6], 'white') # "\e[97m♟"
+      pieces_array << Pawn.new(@board, [i, 1], 'black') # "\e[30m♟"
     end
   end
 
   def create_rooks(pieces_array)
-    pieces_array << Rook.new(@board.coordinates, [0, 7], 'white') # "\e[97m♜"
-    pieces_array << Rook.new(@board.coordinates, [7, 7], 'white') # "\e[97m♜"
-    pieces_array << Rook.new(@board.coordinates, [0, 0], 'black') # "\e[30m♜"
-    pieces_array << Rook.new(@board.coordinates, [7, 0], 'black') # "\e[30m♜"
+    pieces_array << Rook.new(@board, [0, 7], 'white') # "\e[97m♜"
+    pieces_array << Rook.new(@board, [7, 7], 'white') # "\e[97m♜"
+    pieces_array << Rook.new(@board, [0, 0], 'black') # "\e[30m♜"
+    pieces_array << Rook.new(@board, [7, 0], 'black') # "\e[30m♜"
   end
 
   def create_knights(pieces_array)
-    pieces_array << Knight.new(@board.coordinates, [1, 7], 'white') # "\e[97m♞"
-    pieces_array << Knight.new(@board.coordinates, [6, 7], 'white') # "\e[97m♞"
-    pieces_array << Knight.new(@board.coordinates, [1, 0], 'black') # "\e[30m♞"
-    pieces_array << Knight.new(@board.coordinates, [6, 0], 'black') # "\e[30m♞"
+    pieces_array << Knight.new(@board, [1, 7], 'white') # "\e[97m♞"
+    pieces_array << Knight.new(@board, [6, 7], 'white') # "\e[97m♞"
+    pieces_array << Knight.new(@board, [1, 0], 'black') # "\e[30m♞"
+    pieces_array << Knight.new(@board, [6, 0], 'black') # "\e[30m♞"
   end
 
   def create_bishops(pieces_array)
-    pieces_array << Bishop.new(@board.coordinates, [2, 7], 'white') # "\e[97m♝"
-    pieces_array << Bishop.new(@board.coordinates, [5, 7], 'white') # "\e[97m♝"
-    pieces_array << Bishop.new(@board.coordinates, [2, 0], 'black') # "\e[30m♝"
-    pieces_array << Bishop.new(@board.coordinates, [5, 0], 'black') # "\e[30m♝"
+    pieces_array << Bishop.new(@board, [2, 7], 'white') # "\e[97m♝"
+    pieces_array << Bishop.new(@board, [5, 7], 'white') # "\e[97m♝"
+    pieces_array << Bishop.new(@board, [2, 0], 'black') # "\e[30m♝"
+    pieces_array << Bishop.new(@board, [5, 0], 'black') # "\e[30m♝"
   end
 
   def create_queens(pieces_array)
-    pieces_array << Queen.new(@board.coordinates, [3, 7], 'white') # "\e[97m♛"
-    pieces_array << Queen.new(@board.coordinates, [3, 0], 'black') # "\e[30m♛"
+    pieces_array << Queen.new(@board, [3, 7], 'white') # "\e[97m♛"
+    pieces_array << Queen.new(@board, [3, 0], 'black') # "\e[30m♛"
   end
 
   def create_kings(pieces_array)
-    pieces_array << King.new(@board.coordinates, [4, 7], 'white') # "\e[97m♚"
-    pieces_array << King.new(@board.coordinates, [4, 0], 'black') # "\e[30m♚"
+    pieces_array << King.new(@board, [4, 7], 'white') # "\e[97m♚"
+    pieces_array << King.new(@board, [4, 0], 'black') # "\e[30m♚"
   end
 
   def select_mode
@@ -190,17 +193,21 @@ class Game
     new_column_index = input_array[1]
     new_row_index = input_array[2]
 
+    # eliminate piece
+    target_square = board.squares[board.coordinates.find_index([new_column_index, new_row_index])]
+    eliminate_piece(target_square) unless target_square == ' '
+
     # place piece
     piece.position = [new_column_index, new_row_index]
-    piece.children = piece.adjacency_list[board.coordinates.find_index(piece.position)]
     @board.reset_squares
     @board.set(@pieces)
+    piece.children = piece.update_children(@board)
   end
 
   def eliminate_piece(piece)
     piece.position = nil
-    @board.reset_squares
-    @board.set(@pieces)
+    # @board.reset_squares
+    # @board.set(@pieces)
   end
 
   def switch_turn

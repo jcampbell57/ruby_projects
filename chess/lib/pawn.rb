@@ -8,13 +8,13 @@ class Pawn < Piece
 
   require_relative 'colors'
 
-  def initialize(coordinates, position, color)
+  def initialize(board, position, color)
     super(position, color)
-    self.adjacency_list = build_adjacency_list(coordinates)
-    self.children = adjacency_list[coordinates.find_index(position)]
+    self.adjacency_list = build_adjacency_list(board)
+    self.children = adjacency_list[board.coordinates.find_index(position)]
   end
 
-  def possible_moves(square, coordinates)
+  def possible_moves(square, board)
     possibilities = []
     possibilities << [square[0], square[1] + 1] if color == 'white'
     possibilities << [square[0], square[1] - 1] if color == 'black'
@@ -29,15 +29,15 @@ class Pawn < Piece
 
     confirmed = []
     possibilities.each do |possibility|
-      coordinates.include?(possibility) ? confirmed << possibility : next
+      board.coordinates.include?(possibility) ? confirmed << possibility : next
     end
     confirmed
   end
 
-  def build_adjacency_list(coordinates)
+  def build_adjacency_list(board)
     adjacency_list = {}
-    coordinates.each_with_index do |square, index|
-      adjacency_list[index] = possible_moves(square, coordinates)
+    board.coordinates.each_with_index do |square, index|
+      adjacency_list[index] = possible_moves(square, board)
     end
     adjacency_list
   end

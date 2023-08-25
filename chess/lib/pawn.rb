@@ -8,24 +8,25 @@ class Pawn < Piece
 
   require_relative 'colors'
 
-  def initialize(board, position, color)
+  def initialize(game, position, color)
     super(position, color)
-    self.adjacency_list = build_adjacency_list(board)
-    self.children = adjacency_list[board.coordinates.find_index(position)]
+    self.adjacency_list = build_adjacency_list(game.board)
+    self.children = update_children(game)
   end
 
   def possible_moves(square, board)
     possibilities = []
-    possibilities << [square[0], square[1] + 1] if color == 'white'
-    possibilities << [square[0], square[1] - 1] if color == 'black'
-    possibilities << [square[0], square[1] + 2] if square[1] == 6 && color == 'white'
-    possibilities << [square[0], square[1] - 2] if square[1] == 1 && color == 'black'
-
-    # fix these
-    # possibilities << [square[0] + 1, square[1] + 1] if 'capture available' && color == 'white'
-    # possibilities << [square[0] - 1, square[1] + 1] if 'capture available' && color == 'white'
-    # possibilities << [square[0] + 1, square[1] + 1] if 'capture available' && color == 'black'
-    # possibilities << [square[0] - 1, square[1] + 1] if 'capture available' && color == 'black'
+    if color == 'white'
+      possibilities << [square[0], square[1] - 1]
+      possibilities << [square[0], square[1] - 2] if square[1] == 6
+      possibilities << [square[0] + 1, square[1] - 1]
+      possibilities << [square[0] - 1, square[1] - 1]
+    elsif color == 'black'
+      possibilities << [square[0], square[1] + 1]
+      possibilities << [square[0], square[1] + 2] if square[1] == 1
+      possibilities << [square[0] + 1, square[1] + 1]
+      possibilities << [square[0] - 1, square[1] + 1]
+    end
 
     confirmed = []
     possibilities.each do |possibility|
@@ -40,6 +41,35 @@ class Pawn < Piece
       adjacency_list[index] = possible_moves(square, board)
     end
     adjacency_list
+  end
+
+  def update_children(game)
+    return nil if position.nil? || position[1] == 0
+
+    moves = []
+
+    adjacency_list[game.board.coordinates.find_index(position)].each do |child|
+      target_square = game.board.squares[game.board.coordinates.find_index(child)]
+      is_same_color = target_square != ' ' && target_square.color == color
+      is_empty_and_diagonal = target_square == ' ' && child[0] != position[0]
+
+      # Only append if not same color or not empty diagonal.
+      moves << child unless is_same_color || is_empty_and_diagonal
+    end
+
+    # do not include 1 or 2 square move if blocked
+    if color == 'white'
+      if game.board.squares[game.board.coordinates.find_index([position[0], position[1] - 1])] != ' '
+        moves.delete([position[0], position[1] - 1])
+        moves.delete([position[0], position[1] - 2])
+      end
+    elsif color == 'black'
+      if game.board.squares[game.board.coordinates.find_index([position[0], position[1] + 1])] != ' '
+        moves.delete([position[0], position[1] + 1])
+        moves.delete([position[0], position[1] + 2])
+      end
+    end
+    moves
   end
 
   def to_s

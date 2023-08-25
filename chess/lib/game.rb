@@ -44,7 +44,7 @@ class Game
     create_kings(pieces_array)
     @board.set(pieces_array)
 
-    pieces_array.each { |piece| piece.children = piece.update_children(@board) }
+    pieces_array.each { |piece| piece.children = piece.update_children(self) }
 
     # return
     pieces_array
@@ -52,40 +52,40 @@ class Game
 
   def create_pawns(pieces_array)
     8.times do |i|
-      pieces_array << Pawn.new(@board, [i, 6], 'white') # "\e[97m♟"
-      pieces_array << Pawn.new(@board, [i, 1], 'black') # "\e[30m♟"
+      pieces_array << Pawn.new(self, [i, 6], 'white') # "\e[97m♟"
+      pieces_array << Pawn.new(self, [i, 1], 'black') # "\e[30m♟"
     end
   end
 
   def create_rooks(pieces_array)
-    pieces_array << Rook.new(@board, [0, 7], 'white') # "\e[97m♜"
-    pieces_array << Rook.new(@board, [7, 7], 'white') # "\e[97m♜"
-    pieces_array << Rook.new(@board, [0, 0], 'black') # "\e[30m♜"
-    pieces_array << Rook.new(@board, [7, 0], 'black') # "\e[30m♜"
+    pieces_array << Rook.new(self, [0, 7], 'white') # "\e[97m♜"
+    pieces_array << Rook.new(self, [7, 7], 'white') # "\e[97m♜"
+    pieces_array << Rook.new(self, [0, 0], 'black') # "\e[30m♜"
+    pieces_array << Rook.new(self, [7, 0], 'black') # "\e[30m♜"
   end
 
   def create_knights(pieces_array)
-    pieces_array << Knight.new(@board, [1, 7], 'white') # "\e[97m♞"
-    pieces_array << Knight.new(@board, [6, 7], 'white') # "\e[97m♞"
-    pieces_array << Knight.new(@board, [1, 0], 'black') # "\e[30m♞"
-    pieces_array << Knight.new(@board, [6, 0], 'black') # "\e[30m♞"
+    pieces_array << Knight.new(self, [1, 7], 'white') # "\e[97m♞"
+    pieces_array << Knight.new(self, [6, 7], 'white') # "\e[97m♞"
+    pieces_array << Knight.new(self, [1, 0], 'black') # "\e[30m♞"
+    pieces_array << Knight.new(self, [6, 0], 'black') # "\e[30m♞"
   end
 
   def create_bishops(pieces_array)
-    pieces_array << Bishop.new(@board, [2, 7], 'white') # "\e[97m♝"
-    pieces_array << Bishop.new(@board, [5, 7], 'white') # "\e[97m♝"
-    pieces_array << Bishop.new(@board, [2, 0], 'black') # "\e[30m♝"
-    pieces_array << Bishop.new(@board, [5, 0], 'black') # "\e[30m♝"
+    pieces_array << Bishop.new(self, [2, 7], 'white') # "\e[97m♝"
+    pieces_array << Bishop.new(self, [5, 7], 'white') # "\e[97m♝"
+    pieces_array << Bishop.new(self, [2, 0], 'black') # "\e[30m♝"
+    pieces_array << Bishop.new(self, [5, 0], 'black') # "\e[30m♝"
   end
 
   def create_queens(pieces_array)
-    pieces_array << Queen.new(@board, [3, 7], 'white') # "\e[97m♛"
-    pieces_array << Queen.new(@board, [3, 0], 'black') # "\e[30m♛"
+    pieces_array << Queen.new(self, [3, 7], 'white') # "\e[97m♛"
+    pieces_array << Queen.new(self, [3, 0], 'black') # "\e[30m♛"
   end
 
   def create_kings(pieces_array)
-    pieces_array << King.new(@board, [4, 7], 'white') # "\e[97m♚"
-    pieces_array << King.new(@board, [4, 0], 'black') # "\e[30m♚"
+    pieces_array << King.new(self, [4, 7], 'white') # "\e[97m♚"
+    pieces_array << King.new(self, [4, 0], 'black') # "\e[30m♚"
   end
 
   def select_mode
@@ -201,7 +201,7 @@ class Game
     piece.position = [new_column_index, new_row_index]
     @board.reset_squares
     @board.set(@pieces)
-    @pieces.each { |board_piece| board_piece.children = board_piece.update_children(@board) }
+    @pieces.each { |board_piece| board_piece.children = board_piece.update_children(self) }
   end
 
   def eliminate_piece(piece)

@@ -11,13 +11,13 @@ class Piece
     self.color = color
   end
 
-  def update_children(board)
+  def update_children(game)
     return nil if position.nil?
 
     children = []
-    adjacency_list[board.coordinates.find_index(position)].each do |child|
+    adjacency_list[game.board.coordinates.find_index(position)].each do |child|
       # do not include squares with same color pieces
-      target_square = board.squares[board.coordinates.find_index(child)]
+      target_square = game.board.squares[game.board.coordinates.find_index(child)]
       children << child unless target_square != ' ' && target_square.color == color
     end
     children

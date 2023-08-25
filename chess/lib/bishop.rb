@@ -8,10 +8,10 @@ class Bishop < Piece
 
   require_relative 'colors'
 
-  def initialize(board, position, color)
+  def initialize(game, position, color)
     super(position, color)
-    self.adjacency_list = build_adjacency_list(board)
-    self.children = adjacency_list[board.coordinates.find_index(position)]
+    self.adjacency_list = build_adjacency_list(game.board)
+    self.children = update_children(game)
   end
 
   def possible_moves(square, board)
@@ -38,13 +38,13 @@ class Bishop < Piece
     adjacency_list
   end
 
-  def update_children(board)
+  def update_children(game)
     return nil if position.nil?
 
     children = []
-    adjacency_list[board.coordinates.find_index(position)].each do |child|
+    adjacency_list[game.board.coordinates.find_index(position)].each do |child|
       # add all possible squares except squares with same color pieces
-      target_square = board.squares[board.coordinates.find_index(child)]
+      target_square = game.board.squares[game.board.coordinates.find_index(child)]
       children << child unless target_square != ' ' && target_square.color == color
     end
 
@@ -62,9 +62,9 @@ class Bishop < Piece
         # remove from children if blocked
         children.delete(square) if obstacle[j] == true
         # block if off of the board
-        obstacle[j] = true && next if board.coordinates.include?(square) == false
+        obstacle[j] = true && next if game.board.coordinates.include?(square) == false
         # block if square is not blank
-        obstacle[j] = true if board.squares[board.coordinates.find_index(square)] != ' '
+        obstacle[j] = true if game.board.squares[game.board.coordinates.find_index(square)] != ' '
       end
     end
 

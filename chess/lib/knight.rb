@@ -8,10 +8,10 @@ class Knight < Piece
 
   require_relative 'colors'
 
-  def initialize(board, position, color)
+  def initialize(game, position, color)
     super(position, color)
-    self.adjacency_list = build_adjacency_list(board)
-    self.children = update_children(board)
+    self.adjacency_list = build_adjacency_list(game.board)
+    self.children = update_children(game)
   end
 
   def possible_moves(square, board)

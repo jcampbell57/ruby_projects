@@ -63,6 +63,7 @@ module Serializer
     # self.correct_guesses = yaml[0][2]
     # self.word_key = yaml[0][3]
     File.delete(saved_games[input])
+    yaml
     # prompt_guess
   end
 end

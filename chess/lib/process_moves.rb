@@ -7,7 +7,6 @@ module ProcessMoves
   # still need to add:
   # check moves (ex: anything above with "+" or "ch" at the end):
   # checkmate moves (ex: anything above with "#" or "mate" at the end):
-  # need to stop bishop/rook and other pieces from moving if other piece is in the way.
 
   # standard moves (ex: Be5, Nf3, c5):
   def valid_standard_move?(input, game)
@@ -27,51 +26,70 @@ module ProcessMoves
   end
 
   def process_standard_move(input, game)
+    # set variables
+    piece_class = input.to_s.size == 3 ? translate_class(input[0]) : Pawn
     column = column_index(input[-2])
     row = 8 - input[-1].to_i
     piece = nil
-    if input.to_s.size == 3
-      piece_class = translate_class(input[0])
-      game.pieces.each do |board_piece|
-        next unless board_piece.is_a?(piece_class) &&
-                    board_piece.color == game.turn &&
-                    board_piece.children.include?([column, row])
+    # find piece
+    game.pieces.each do |board_piece|
+      # skip captured pieces
+      next if board_piece.children.nil?
+      next unless board_piece.is_a?(piece_class) &&
+                  board_piece.color == game.turn &&
+                  board_piece.children.include?([column, row])
 
-        piece = board_piece
-        break
-      end
-    elsif input.to_s.size == 2
-      game.pieces.each do |board_piece|
-        # skip dead pieces
-        next if board_piece.children.nil?
-        next unless board_piece.is_a?(Pawn) &&
-                    board_piece.color == game.turn &&
-                    board_piece.children.include?([column, row])
-
-        piece = board_piece
-        break
-      end
+      piece = board_piece
+      break
     end
+    # return
     [piece, column, row]
   end
 
   # disambiguating moves (ex: Qh4e1, R1a3, Rdf8):
-  def valid_disambiguating_move?(input, _game)
-    return true if input.to_s.match(/\A[BKNPQR][a-h][1-8][a-h][1-8]\z/) ||
-                   input.to_s.match(/\A[BKNPQR][a-h][a-h][1-8]\z/) ||
-                   input.to_s.match(/\A[BKNPQR][1-8][a-h][1-8]\z/)
+  def valid_disambiguating_move?(input, game)
+    return false, [] if input.nil?
+
+    # check to see if input matches syntax
+    first_match = input.to_s.match(/\A[BKNPQR][a-h][1-8][a-h][1-8]\z/)&.[](0)
+    second_match = input.to_s.match(/\A[BKNPQR][a-h][a-h][1-8]\z/)&.[](0)
+    third_match = input.to_s.match(/\A[BKNPQR][1-8][a-h][1-8]\z/)&.[](0)
+    # p input == first_match
+    # p input == second_match
+    return false, [] unless first_match == input ||
+                            second_match == input ||
+                            third_match == input
+
+    # process move
+    result_array = process_disambiguating_move(input, game)
+    # return false if piece is not able to move to target square
+    return false, [] if result_array[0].nil?
+
+    [true, result_array]
   end
 
-  def process_disambiguating_move(input, _turn)
+  def process_disambiguating_move(input, game)
+    piece_class = translate_class(input[0])
     column = column_index(input[-2])
-    row = input[-1] - 1
+    row = 8 - input[-1].to_i
+    piece = nil
     if input.to_s.size == 5
-      piece = game.board.squares[game.board.coordinates.find_index(column_index(input[1]), input[2] - 1)]
+      game.pieces.each do |board_piece|
+        piece = board_piece if board_piece.position == [column_index(input[1]), 8 - input[2].to_i]
+      end
     elsif input.to_s.size == 4
       if input[1].to_s.match(/[a-h]/)
-        # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
+        piece = game.pieces.find do |p|
+          p.instance_of?(piece_class) &&
+            p.position[0] == column_index(input[1]) &&
+            p.color == game.turn
+        end
       elsif input[1].to_s.match(/[1-8]/)
-        # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
+        piece = game.pieces.find do |p|
+          p.instance_of?(piece_class) &&
+            p.position[1] == 8 - input[1].to_i &&
+            p.color == game.turn
+        end
       end
     end
     [piece, column, row]
@@ -79,25 +97,38 @@ module ProcessMoves
 
   # pawn promotion moves (ex: e8Q, e8=Q, e8(Q), e8/Q):
   def valid_pawn_promotion_move?(input, _game)
-    return true if input.to_s.match(/\A[a-h]8\([BNQR]\)\z/) ||
-                   input.to_s.match(%r{\A[a-h]8[/=][BNQR]\z}) ||
-                   input.to_s.match(/\A[a-h]8[BNQR]\z/)
+    return false, [] if input.nil?
+
+    # check to see if input matches syntax
+    first_match = input.to_s.match(/\A[a-h]8\([BNQR]\)\z/)&.[](0)
+    second_match = input.to_s.match(%r{\A[a-h]8[/=][BNQR]\z})&.[](0)
+    third_match = input.to_s.match(/\A[a-h]8[BNQR]\z/)&.[](0)
+    return false, [] unless first_match == input ||
+                            second_match == input ||
+                            third_match == input
+
+    # process move
+    result_array = process_pawn_promotion_move(input, game)
+    # return false if piece is not able to move to target square
+    return false, [] if result_array[0].nil?
+
+    [true, result_array]
   end
 
   def process_pawn_promotion_move(input, _turn)
     if input.to_s.size == 5
-      column = column_index(input[1])
-      row = input[2] - 1
+      column = column_index(input[0])
+      row = 8 - input[1].to_i
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
     elsif input.to_s.size == 4
-      column = column_index(input[1])
-      row = input[2] - 1
+      column = column_index(input[0])
+      row = 8 - input[1].to_i
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
     elsif input.to_s.size == 3
-      column = column_index(input[1])
-      row = input[2] - 1
+      column = column_index(input[0])
+      row = 8 - input[1].to_i
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
     end
@@ -106,25 +137,38 @@ module ProcessMoves
 
   # pawn promotion capture moves (ex: dxe8Q, dxe8=Q, dxe8(Q), dxe8/Q):
   def valid_pawn_promotion_capture_move?(input, _game)
-    return true if input.to_s.match(/\A[a-h]x[a-h]8\([BNQR]\)\z/) ||
-                   input.to_s.match(%r{/\A[a-h]x[a-h]8[=/][BNQR]\z/}) ||
-                   input.to_s.match(/\A[a-h]x[a-h]8[BNQR]\z/)
+    return false, [] if input.nil?
+
+    # check to see if input matches syntax
+    first_match = input.to_s.match(/\A[a-h]x[a-h]8\([BNQR]\)\z/)&.[](0)
+    second_match = input.to_s.match(%r{/\A[a-h]x[a-h]8[=/][BNQR]\z/})&.[](0)
+    third_match = input.to_s.match(/\A[a-h]x[a-h]8[BNQR]\z/)&.[](0)
+    return false, [] unless first_match == input ||
+                            second_match == input ||
+                            third_match == input
+
+    # process move
+    result_array = process_pawn_promotion_capture_move(input, game)
+    # return false if piece is not able to move to target square
+    return false, [] if result_array[0].nil?
+
+    [true, result_array]
   end
 
   def process_pawn_promotion_capture_move(input, _turn)
     if input.to_s.size == 7
       column = column_index(input[1])
-      row = input[2] - 1
+      row = 8 - input[2].to_i
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
     elsif input.to_s.size == 6
       column = column_index(input[1])
-      row = input[2] - 1
+      row = 8 - input[2].to_i
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
     elsif input.to_s.size == 5
       column = column_index(input[1])
-      row = input[2] - 1
+      row = 8 - input[2].to_i
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
     end
@@ -133,16 +177,31 @@ module ProcessMoves
 
   # capture moves (ex: Qh4xe1, R1xa3, Rdxf8, Bxe5, Nxf3, exd6):
   def valid_capture_move?(input, _game)
-    return true if input.to_s.match(/\A[BKNPQR][a-h][1-8]x[a-h][1-8]\z/) ||
-                   input.to_s.match(/\A[BKNPQR][a-h]x[a-h][1-8]\z/) ||
-                   input.to_s.match(/\A[BKNPQR][1-8]x[a-h][1-8]\z/) ||
-                   input.to_s.match(/\A[BKNPQR]x[a-h][1-8]\z/) ||
-                   input.to_s.match(/\A[a-h]x[a-h][1-8]\z/)
+    return false, [] if input.nil?
+
+    # check to see if input matches syntax
+    first_match = input.to_s.match(/\A[BKNPQR][a-h][1-8]x[a-h][1-8]\z/)&.[](0)
+    second_match = input.to_s.match(/\A[BKNPQR][a-h]x[a-h][1-8]\z/)&.[](0)
+    third_match = input.to_s.match(/\A[BKNPQR][1-8]x[a-h][1-8]\z/)&.[](0)
+    fourth_match = input.to_s.match(/\A[BKNPQR]x[a-h][1-8]\z/)&.[](0)
+    fifth_match = input.to_s.match(/\A[a-h]x[a-h][1-8]\z/)&.[](0)
+    return false, [] unless first_match == input ||
+                            second_match == input ||
+                            third_match == input ||
+                            fourth_match == input ||
+                            fifth_match == input
+
+    # process move
+    result_array = process_capture_move(input, game)
+    # return false if piece is not able to move to target square
+    return false, [] if result_array[0].nil?
+
+    [true, result_array]
   end
 
   def process_capture_move(input, _turn)
     column = column_index(input[-2])
-    row = input[-1] - 1
+    row = 8 - input[-1].to_i
     if input.to_s.size == 6
       # piece = game.board.squares[game.board.coordinates.find_index(column, row)]
     elsif input.to_s.size == 5
@@ -163,33 +222,46 @@ module ProcessMoves
 
   # castling moves (ex: Kg1, Kb8):
   def valid_castling_move?(input, _game)
-    return true if input.to_s.match(/\A[0O]-[0O]-[0O]\z/) ||
-                   input.to_s.match(/\A[0O]-[0O]\z/) ||
-                   input.to_s.match(/\AK[bg][18]\z/)
+    return false, [] if input.nil?
+
+    # check to see if input matches syntax
+    first_match = input.to_s.match(/\A[0O]-[0O]-[0O]\z/)&.[](0)
+    second_match = input.to_s.match(/\A[0O]-[0O]\z/)&.[](0)
+    third_match = input.to_s.match(/\AK[bg][18]\z/)&.[](0)
+    return false, [] unless first_match == input ||
+                            second_match == input ||
+                            third_match == input
+
+    # process move
+    result_array = process_castling_move(input, game)
+    # return false if piece is not able to move to target square
+    return false, [] if result_array[0].nil?
+
+    [true, result_array]
   end
 
   def process_castling_move(input, _turn)
     if input.to_s.size == 5
       if @turn == 'white'
         column = column_index(input[1])
-        row = input[2] - 1
+        row = 8 - input[2].to_i
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
       elsif @turn == 'black'
         column = column_index(input[1])
-        row = input[2] - 1
+        row = 8 - input[2].to_i
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
       end
     elsif input.to_s.size == 3
       if @turn == 'white'
         column = column_index(input[1])
-        row = input[2] - 1
+        row = 8 - input[2].to_i
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
       elsif @turn == 'black'
         column = column_index(input[1])
-        row = input[2] - 1
+        row = 8 - input[2].to_i
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
         # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
       end

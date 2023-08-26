@@ -189,7 +189,7 @@ module ProcessMoves
   end
 
   # capture moves (ex: Qh4xe1, R1xa3, Rdxf8, Bxe5, Nxf3, exd6):
-  def valid_capture_move?(input, _game)
+  def valid_capture_move?(input, game)
     return false, [] if input.nil?
 
     # check to see if input matches syntax
@@ -212,24 +212,46 @@ module ProcessMoves
     [true, result_array]
   end
 
-  def process_capture_move(input, _turn)
+  def process_capture_move(input, game)
+    # assign target column/row
     column = column_index(input[-2])
     row = 8 - input[-1].to_i
+
+    # assign current column/row
+    piece_column = nil
+    piece_row = nil
     if input.to_s.size == 6
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)]
+      piece_column = column_index(input[1])
+      piece_row = 8 - input[2].to_i
     elsif input.to_s.size == 5
       if input[1].to_s.match(/[a-h]/)
-        # piece = game.board.squares[game.board.coordinates.find_index(column, row)]
+        piece_column = column_index(input[1])
       elsif input[1].to_s.match(/[1-8]/)
-        # piece = game.board.squares[game.board.coordinates.find_index(column, row)]
+        piece_row = 8 - input[1].to_i
       end
     elsif input.to_s.size == 4
       if input[0].to_s.match(/[BKNPQR]/)
-        # piece = game.board.squares[game.board.coordinates.find_index(column, row)]
+        # there is no known column or row in this case
       elsif input[0].to_s.match(/[a-h]/)
-        # piece = game.board.squares[game.board.coordinates.find_index(column, row)]
+        piece_column = column_index(input[0])
       end
     end
+
+    # find piece
+    piece = nil
+    piece_class = input[0].to_s.match(/[BKNPQR]/) ? translate_class(input[0]) : Pawn
+    game.pieces.each do |board_piece|
+      # skip captured pieces
+      next if board_piece.children.nil?
+
+      conditions = []
+      conditions << board_piece.instance_of?(piece_class)
+      conditions << board_piece.position[0] == piece_column if piece_column
+      conditions << board_piece.position[1] == piece_row if piece_row
+      conditions << board_piece.children.include?([column, row])
+      piece = board_piece if conditions.all?
+    end
+
     [piece, column, row]
   end
 

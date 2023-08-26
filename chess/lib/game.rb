@@ -12,8 +12,10 @@ class Game
   require_relative 'process_moves'
   require_relative 'queen'
   require_relative 'rook'
+  require_relative 'serializer'
 
   include ProcessMoves
+  include Serializer
 
   def initialize(board = Board.new,
                  pieces = nil,

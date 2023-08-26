@@ -96,7 +96,7 @@ module ProcessMoves
   end
 
   # pawn promotion moves (ex: e8Q, e8=Q, e8(Q), e8/Q):
-  def valid_pawn_promotion_move?(input, _game)
+  def valid_pawn_promotion_move?(input, game)
     return false, [] if input.nil?
 
     # check to see if input matches syntax
@@ -115,23 +115,34 @@ module ProcessMoves
     [true, result_array]
   end
 
-  def process_pawn_promotion_move(input, _turn)
-    if input.to_s.size == 5
-      column = column_index(input[0])
-      row = 8 - input[1].to_i
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
-    elsif input.to_s.size == 4
-      column = column_index(input[0])
-      row = 8 - input[1].to_i
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
-    elsif input.to_s.size == 3
-      column = column_index(input[0])
-      row = 8 - input[1].to_i
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'white'
-      # piece = game.board.squares[game.board.coordinates.find_index(column, row)] if turn == 'black'
+  def process_pawn_promotion_move(input, game)
+    column = column_index(input[0])
+    row = 8 - input[1].to_i
+
+    # create new piece
+    piece = nil
+    if input.to_s.size == 3
+      new_piece_class = translate_class(input[2])
+      piece = new_piece_class.new(game, nil, game.turn)
+    else
+      new_piece_class = translate_class(input[3])
+      piece = new_piece_class.new(game, nil, game.turn)
     end
+    game.pieces << piece
+
+    # delete old piece
+    old_piece = nil
+    game.pieces.each do |board_piece|
+      # skip captured pieces
+      next if board_piece.children.nil?
+      next unless board_piece.instance_of?(Pawn) && board_piece.children.include?([column, row])
+
+      old_piece = board_piece
+      break
+    end
+    old_piece.position = nil
+
+    # return
     [piece, column, row]
   end
 

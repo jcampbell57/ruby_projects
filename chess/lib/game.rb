@@ -190,20 +190,29 @@ class Game
   end
 
   def place_piece(input_array)
-    # assign values from array
-    piece = input_array[0]
-    new_column_index = input_array[1]
-    new_row_index = input_array[2]
+    # castling move returns two moves to process:
+    if input_array.size == 2
+      input_array.each do |array|
+        place_piece(array)
+      end
+    elsif input_array.size == 3
+      # assign values from array
+      piece = input_array[0]
+      new_column_index = input_array[1]
+      new_row_index = input_array[2]
 
-    # eliminate piece
-    target_square = board.squares[board.coordinates.find_index([new_column_index, new_row_index])]
-    eliminate_piece(target_square) unless target_square == ' '
+      # eliminate piece
+      target_square = board.squares[board.coordinates.find_index([new_column_index, new_row_index])]
+      eliminate_piece(target_square) unless target_square == ' '
 
-    # place piece
-    piece.position = [new_column_index, new_row_index]
-    @board.reset_squares
-    @board.set(@pieces)
-    @pieces.each { |board_piece| board_piece.children = board_piece.update_children(self) }
+      # place piece
+      piece.position = [new_column_index, new_row_index]
+      @board.reset_squares
+      @board.set(@pieces)
+      @pieces.each { |board_piece| board_piece.children = board_piece.update_children(self) }
+    else
+      p 'error 4329'
+    end
   end
 
   def eliminate_piece(piece)

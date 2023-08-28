@@ -4,8 +4,11 @@
 require_relative 'game'
 game = Game.new
 
+# menu
+game.menu
+
 # new game:
-game.new_game
+# game.new_game
 
 # make rspec tests of the things below this line:
 

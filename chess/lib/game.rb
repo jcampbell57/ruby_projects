@@ -29,6 +29,30 @@ class Game
     self.turn = turn
   end
 
+  def menu
+    puts 'Chess?'
+    puts '[1] New Game'
+    puts '[2] Load Game'
+    print 'Selection: '
+    menu_selection = verify_menu_selection(gets.chomp.to_i)
+    process_menu_selection(menu_selection)
+  end
+
+  def verify_menu_selection(input)
+    loop do
+      return input if input.to_s.match(/[1-2]/) && input.to_s.size == 1
+
+      # else
+      puts 'Invalid input!'
+      input = select_mode(gets.chomp.to_i)
+    end
+  end
+
+  def process_menu_selection(menu_selection)
+    new_game if menu_selection == 1
+    choose_game if menu_selection == 2
+  end
+
   def new_game
     @pieces = create_pieces
     @mode = select_mode
@@ -37,6 +61,7 @@ class Game
   end
 
   def create_pieces
+    # create pieces
     pieces_array = []
     create_pawns(pieces_array)
     create_knights(pieces_array)
@@ -44,8 +69,9 @@ class Game
     create_rooks(pieces_array)
     create_queens(pieces_array)
     create_kings(pieces_array)
-    @board.set(pieces_array)
 
+    # place pieces and update possible moves
+    @board.set(pieces_array)
     pieces_array.each { |piece| piece.children = piece.update_children(self) }
 
     # return
@@ -140,9 +166,10 @@ class Game
     if @mode == 1
       return computer_move unless @turn == @player
 
-      input_prompt = 'Your turn! Input: '
+      input_prompt = "Your turn! Input 'save' or input your next move: "
     elsif @mode == 2
-      input_prompt = @turn == @player ? "White's turn! Input: " : "Black's turn! Input: "
+      input_prompt = @turn == 'white' ? "White's turn!" : "Black's turn!"
+      input_prompt += " Input 'save' or input your next move: "
     end
     input = get_input(input_prompt)
     verify_move(input)
@@ -150,14 +177,24 @@ class Game
 
   def verify_move(input)
     loop do
-      result = process_move(input)
-      if result.nil?
-        input = get_input('Invalid input! Try again: ')
+      if input.downcase == 'save'
+        process_save
+        exit
       else
-        place_piece(result)
-        break
+        result = process_move(input)
+        if result.nil?
+          input = get_input('Invalid input! Try again: ')
+        else
+          place_piece(result)
+          break
+        end
       end
     end
+  end
+
+  def process_save
+    save_game(self)
+    prompt_new_game
   end
 
   def process_move(input)
@@ -258,9 +295,7 @@ class Game
     input = verify_new_game_input(gets.chomp.downcase)
     return unless input == 'y'
 
-    @board = Board.new
-    @turn = 'white'
-    play
+    Game.new.menu
   end
 
   def verify_new_game_input(input)

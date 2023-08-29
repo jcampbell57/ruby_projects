@@ -338,6 +338,17 @@ module ProcessMoves
     return Rook if input == 'R'
   end
 
+  def reverse_column_index(input)
+    return 'a' if input.zero?
+    return 'b' if input == 1
+    return 'c' if input == 2
+    return 'd' if input == 3
+    return 'e' if input == 4
+    return 'f' if input == 5
+    return 'g' if input == 6
+    return 'h' if input == 7
+  end
+
   def column_index(input)
     return 0 if input == 'a'
     return 1 if input == 'b'

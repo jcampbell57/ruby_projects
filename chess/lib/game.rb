@@ -216,14 +216,51 @@ class Game
   end
 
   def computer_move
-    puts "Computer's turn! The computer chooses: "
-    # print "Computer's turn! The computer chooses: "
-    # 3.times do
-    #   sleep(1)
-    #   print '.'
-    # end
-    # computer_input =
-    # verify_move(computer_input)
+    # puts "Computer's turn! The computer chooses: "
+    print "Computer's turn! The computer chooses: "
+    sleep(0.5)
+    2.times do
+      print '.'
+      sleep(0.5)
+    end
+
+    # choose piece & move
+    possible_pieces = @pieces.select do |piece|
+      piece.position.nil? == false && piece.color == @turn && piece.children.empty? == false
+    end
+    random_piece = possible_pieces.sample
+    random_move = random_piece.children.sample
+    target_column = random_move[0]
+    target_row = random_move[1]
+
+    # Log move
+    log = String.new
+    log += random_piece.class.to_s[0] unless random_piece.instance_of?(Pawn) || random_piece.instance_of?(Knight)
+    log += 'N' if random_piece.instance_of?(Knight)
+    log += reverse_column_index(random_piece.position[0]) if @pieces.find do |piece|
+                                                               next if piece.position.nil?
+
+                                                               piece.instance_of?(random_piece.class) &&
+                                                               piece.children.include?([random_move]) &&
+                                                               piece.position[0] != random_piece.position[0]
+                                                             end.nil? == false
+    log += random_piece.position[1].to_s if @pieces.find do |piece|
+                                              next if piece.position.nil?
+
+                                              piece.instance_of?(random_piece.class) &&
+                                              piece.children.include?([random_move]) &&
+                                              piece.position[1] != random_piece.position[1]
+                                            end.nil? == false
+    if @board.squares[@board.coordinates.find_index([target_column, target_row])] != ' '
+      log += 'x'
+      log.prepend(reverse_column_index(random_piece.position[0])) if random_piece.instance_of?(Pawn)
+    end
+    log += reverse_column_index(target_column)
+    log += (8 - target_row).to_s
+    puts " #{log}"
+
+    # execute move
+    place_piece(process_move(log))
   end
 
   def place_piece(input_array)
@@ -263,6 +300,10 @@ class Game
     return unless @mode == 2
 
     @player = @player == 'white' ? 'black' : 'white'
+  end
+
+  def mate?
+    false
   end
 
   def checkmate?

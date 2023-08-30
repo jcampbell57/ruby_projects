@@ -44,7 +44,7 @@ class Pawn < Piece
   end
 
   def update_children(game)
-    return nil if position.nil? || position[1] == 0
+    return nil if position.nil? || position[1].zero? || position[1] == 7
 
     moves = []
 

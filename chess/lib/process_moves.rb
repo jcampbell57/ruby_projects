@@ -197,10 +197,11 @@ module ProcessMoves
 
     # check to see if input matches syntax
     first_match = input.to_s.match(/\A[BKNPQR][a-h][1-8]x[a-h][1-8]\z/)&.[](0)
-    second_match = input.to_s.match(/\A[BKNPQR][a-h]x[a-h][1-8]\z/)&.[](0)
+    second_match = input.to_s.match(/\A[BKNQR][a-h]x[a-h][1-8]\z/)&.[](0) ||
+                   input.to_s.match(/\AP[a-h]x[a-h][1-7]\z/)&.[](0)
     third_match = input.to_s.match(/\A[BKNPQR][1-8]x[a-h][1-8]\z/)&.[](0)
     fourth_match = input.to_s.match(/\A[BKNPQR]x[a-h][1-8]\z/)&.[](0)
-    fifth_match = input.to_s.match(/\A[a-h]x[a-h][1-8]\z/)&.[](0)
+    fifth_match = input.to_s.match(/\A[a-h]x[a-h][1-7]\z/)&.[](0)
     return false, [] unless first_match == input ||
                             second_match == input ||
                             third_match == input ||

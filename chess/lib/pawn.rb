@@ -59,13 +59,21 @@ class Pawn < Piece
 
     # do not include 1 or 2 square move if blocked
     if color == 'white'
-      if game.board.squares[game.board.coordinates.find_index([position[0], position[1] - 1])] != ' '
+      move_one_square = game.board.coordinates.find_index([position[0], position[1] - 1])
+      move_two_squares = game.board.coordinates.find_index([position[0], position[1] - 2])
+      if move_one_square.nil? || game.board.squares[move_one_square] != ' '
         moves.delete([position[0], position[1] - 1])
+        moves.delete([position[0], position[1] - 2])
+      elsif move_two_squares.nil? || game.board.squares[move_two_squares] != ' '
         moves.delete([position[0], position[1] - 2])
       end
     elsif color == 'black'
-      if game.board.squares[game.board.coordinates.find_index([position[0], position[1] + 1])] != ' '
+      move_one_square = game.board.coordinates.find_index([position[0], position[1] + 1])
+      move_two_squares = game.board.coordinates.find_index([position[0], position[1] + 2])
+      if move_one_square.nil? || game.board.squares[move_one_square] != ' '
         moves.delete([position[0], position[1] + 1])
+        moves.delete([position[0], position[1] + 2])
+      elsif move_two_squares.nil? || game.board.squares[move_two_squares] != ' '
         moves.delete([position[0], position[1] + 2])
       end
     end

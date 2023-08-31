@@ -33,7 +33,6 @@ class Knight < Piece
   def build_adjacency_list(board)
     adjacency_list = {}
     board.coordinates.each_with_index do |square, index|
-      # adjacency_list[index] = [] # do I need this?
       adjacency_list[index] = possible_moves(square, board)
     end
     adjacency_list
@@ -42,22 +41,4 @@ class Knight < Piece
   def to_s
     color == 'white' ? white + '♞' : black + '♞'
   end
-
-  # def knight_moves(start_position, end_position, board = Board.new)
-  #   queue = []
-  #   current_node = Knight.new(start_position, nil, board)
-  #   until current_node.position == end_position
-  #     current_node.children.each { |move| queue << Knight.new(move, current_node, board) }
-  #     break if queue.empty?
-
-  #     current_node = queue.shift
-  #   end
-  #   shortest_path = []
-  #   until current_node.nil?
-  #     shortest_path.unshift(current_node.position)
-  #     current_node = current_node.parent
-  #   end
-  #   puts "The shortest path from #{start_position} to #{end_position} is #{shortest_path.size - 1} moves: "
-  #   shortest_path.each { |move| puts "#{move}" }
-  # end
 end

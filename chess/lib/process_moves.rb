@@ -57,8 +57,6 @@ module ProcessMoves
     first_match = input.to_s.match(/\A[BKNPQR][a-h][1-8][a-h][1-8]\z/)&.[](0)
     second_match = input.to_s.match(/\A[BKNPQR][a-h][a-h][1-8]\z/)&.[](0)
     third_match = input.to_s.match(/\A[BKNPQR][1-8][a-h][1-8]\z/)&.[](0)
-    # p input == first_match
-    # p input == second_match
     return false, [] unless first_match == input ||
                             second_match == input ||
                             third_match == input
@@ -274,7 +272,7 @@ module ProcessMoves
     # process move
     result_array = process_castling_move(input, game)
     # return false if piece is not able to move to target square
-    return false, [] if result_array[0].nil?
+    return false, [] if result_array[0].nil? || result_array[-1].nil?
 
     [true, result_array]
   end
@@ -288,8 +286,11 @@ module ProcessMoves
     row = nil
     piece = nil
     rook_move = nil
+
     if game.turn == 'white'
       white_king = game.pieces.find { |board_piece| board_piece.is_a?(King) && board_piece.color == 'white' }
+      return [nil] unless white_king.position == [4, 7]
+
       obstacle_spaces = []
       if (input == 'Kb1' || input[/\A[0O]-[0O]-[0O]\z/]) &&
          game.board.squares[game.board.coordinates.find_index([0, 7])].is_a?(Rook)
@@ -303,12 +304,17 @@ module ProcessMoves
         column = 6
         row = 7
         obstacle_spaces = [[5, 7], [6, 7]]
+      else
+        return [nil]
       end
       return [nil] unless spaces_clear?(obstacle_spaces, game)
 
       piece = white_king if spaces_clear?(obstacle_spaces, game) && (white_king.position == [4, 7])
+
     elsif game.turn == 'black'
       black_king = game.pieces.find { |board_piece| board_piece.is_a?(King) && board_piece.color == 'black' }
+      return [nil] unless black_king.position == [4, 0]
+
       obstacle_spaces = []
       if (input == 'Kb8' || input[/\A[0O]-[0O]-[0O]\z/]) &&
          game.board.squares[game.board.coordinates.find_index([0, 0])].is_a?(Rook)
@@ -322,11 +328,14 @@ module ProcessMoves
         column = 6
         row = 0
         obstacle_spaces = [[5, 0], [6, 0]]
+      else
+        return [nil]
       end
       return [nil] unless spaces_clear?(obstacle_spaces, game)
 
       piece = black_king if spaces_clear?(obstacle_spaces, game) && black_king.position == [4, 0]
     end
+
     [[piece, column, row], rook_move]
   end
 

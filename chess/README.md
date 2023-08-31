@@ -9,3 +9,5 @@ This project could be improved with:
   - undo move should pull from game history instead of undo any piece's previous move.
   - feature to 'replay game' and go through move by move or let it autoplay the whole game.
 - Binary search implemented where appropriate
+- I tried to reduce save file size by having each piece create an adjacency list each time update_children is called,
+    but that slowed the game down significantly

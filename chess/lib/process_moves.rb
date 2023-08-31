@@ -101,9 +101,9 @@ module ProcessMoves
     return false, [] if input.nil?
 
     # check to see if input matches syntax
-    first_match = input.to_s.match(/\A[a-h]8\([BNQR]\)\z/)&.[](0)
-    second_match = input.to_s.match(%r{\A[a-h]8[/=][BNQR]\z})&.[](0)
-    third_match = input.to_s.match(/\A[a-h]8[BNQR]\z/)&.[](0)
+    first_match = input.to_s.match(/\A[a-h][18]\([BNQR]\)\z/)&.[](0)
+    second_match = input.to_s.match(%r{\A[a-h][18][/=][BNQR]\z})&.[](0)
+    third_match = input.to_s.match(/\A[a-h][18][BNQR]\z/)&.[](0)
     return false, [] unless first_match == input ||
                             second_match == input ||
                             third_match == input
@@ -146,9 +146,9 @@ module ProcessMoves
     return false, [] if input.nil?
 
     # check to see if input matches syntax
-    first_match = input.to_s.match(/\A[a-h]x[a-h]8\([BNQR]\)\z/)&.[](0)
-    second_match = input.to_s.match(%r{\A[a-h]x[a-h]8[/=][BNQR]\z})&.[](0)
-    third_match = input.to_s.match(/\A[a-h]x[a-h]8[BNQR]\z/)&.[](0)
+    first_match = input.to_s.match(/\A[a-h]x[a-h][18]\([BNQR]\)\z/)&.[](0)
+    second_match = input.to_s.match(%r{\A[a-h]x[a-h][18][/=][BNQR]\z})&.[](0)
+    third_match = input.to_s.match(/\A[a-h]x[a-h][18][BNQR]\z/)&.[](0)
     return false, [] unless first_match == input ||
                             second_match == input ||
                             third_match == input
@@ -248,7 +248,10 @@ module ProcessMoves
 
       conditions = []
       conditions << board_piece.instance_of?(piece_class)
-      conditions << board_piece.position[0] == piece_column if piece_column
+      conditions << (board_piece.color == game.turn)
+      if piece_column
+        conditions << (input.to_s.size == 4 ? board_piece.position[0] == piece_column : board_piece.position[1] == piece_column)
+      end
       conditions << board_piece.position[1] == piece_row if piece_row
       conditions << board_piece.children.include?([column, row])
       piece = board_piece if conditions.all?
@@ -281,59 +284,50 @@ module ProcessMoves
     spaces_array.all? { |space| game.board.squares[game.board.coordinates.find_index([space[0], space[1]])] == ' ' }
   end
 
+  def can_castle?(input, game, king)
+    king.position == (king.color == 'white?' ? [4, 7] : [4, 0]) &&
+      if input == 'Kb1' || input[/\A[0O]-[0O]-[0O]\z/]
+        game.board.squares[game.board.coordinates.find_index([0, 7])].is_a?(Rook)
+        spaces_clear?([[1, 7], [2, 7], [3, 7]], game)
+      elsif input == 'Kg1' || input[/\A[0O]-[0O]\z/]
+        game.board.squares[game.board.coordinates.find_index([7, 7])].is_a?(Rook)
+        spaces_clear?([[5, 7], [6, 7]], game)
+      elsif input == 'Kb8' || input[/\A[0O]-[0O]-[0O]\z/]
+        game.board.squares[game.board.coordinates.find_index([0, 0])].is_a?(Rook)
+        spaces_clear?([[1, 0], [2, 0], [3, 0]], game)
+      elsif input == 'Kg8' || input[/\A[0O]-[0O]\z/]
+        game.board.squares[game.board.coordinates.find_index([7, 0])].is_a?(Rook)
+        spaces_clear?([[5, 0], [6, 0]], game)
+      end
+  end
+
   def process_castling_move(input, game)
     column = nil
     row = nil
-    piece = nil
     rook_move = nil
+    piece = game.pieces.find { |board_piece| board_piece.is_a?(King) && board_piece.color == game.turn }
+    if can_castle?(input, game, piece) == false
+      return process_standard_move(input, game) if %w[Kb1 Kg1 Kb8 Kg8].include?(input)
 
-    if game.turn == 'white'
-      white_king = game.pieces.find { |board_piece| board_piece.is_a?(King) && board_piece.color == 'white' }
-      return [nil] unless white_king.position == [4, 7]
-
-      obstacle_spaces = []
-      if (input == 'Kb1' || input[/\A[0O]-[0O]-[0O]\z/]) &&
-         game.board.squares[game.board.coordinates.find_index([0, 7])].is_a?(Rook)
-        rook_move = [game.board.squares[game.board.coordinates.find_index([0, 7])], 3, 7]
-        column = 2
-        row = 7
-        obstacle_spaces = [[1, 7], [2, 7], [3, 7]]
-      elsif (input == 'Kg1' || input[/\A[0O]-[0O]\z/]) &&
-            game.board.squares[game.board.coordinates.find_index([7, 7])].is_a?(Rook)
-        rook_move = [game.board.squares[game.board.coordinates.find_index([7, 7])], 5, 7]
-        column = 6
-        row = 7
-        obstacle_spaces = [[5, 7], [6, 7]]
-      else
-        return [nil]
-      end
-      return [nil] unless spaces_clear?(obstacle_spaces, game)
-
-      piece = white_king if spaces_clear?(obstacle_spaces, game) && (white_king.position == [4, 7])
-
-    elsif game.turn == 'black'
-      black_king = game.pieces.find { |board_piece| board_piece.is_a?(King) && board_piece.color == 'black' }
-      return [nil] unless black_king.position == [4, 0]
-
-      obstacle_spaces = []
-      if (input == 'Kb8' || input[/\A[0O]-[0O]-[0O]\z/]) &&
-         game.board.squares[game.board.coordinates.find_index([0, 0])].is_a?(Rook)
-        rook_move = [game.board.squares[game.board.coordinates.find_index([0, 0])], 3, 0]
-        column = 2
-        row = 0
-        obstacle_spaces = [[1, 0], [2, 0], [3, 0]]
-      elsif (input == 'Kg8' || input[/\A[0O]-[0O]\z/]) &&
-            game.board.squares[game.board.coordinates.find_index([7, 0])].is_a?(Rook)
-        rook_move = [game.board.squares[game.board.coordinates.find_index([7, 0])], 5, 0]
-        column = 6
-        row = 0
-        obstacle_spaces = [[5, 0], [6, 0]]
-      else
-        return [nil]
-      end
-      return [nil] unless spaces_clear?(obstacle_spaces, game)
-
-      piece = black_king if spaces_clear?(obstacle_spaces, game) && black_king.position == [4, 0]
+      return [nil]
+    elsif input == 'Kb1' || (input[/\A[0O]-[0O]-[0O]\z/] && game.turn == 'white')
+      rook_move = [game.board.squares[game.board.coordinates.find_index([0, 7])], 3, 7]
+      column = 2
+      row = 7
+    elsif input == 'Kg1' || (input[/\A[0O]-[0O]\z/] && game.turn == 'white')
+      rook_move = [game.board.squares[game.board.coordinates.find_index([7, 7])], 5, 7]
+      column = 6
+      row = 7
+    elsif input == 'Kb8' || (input[/\A[0O]-[0O]-[0O]\z/] && game.turn == 'black')
+      rook_move = [game.board.squares[game.board.coordinates.find_index([0, 0])], 3, 0]
+      column = 2
+      row = 0
+    elsif input == 'Kg8' || (input[/\A[0O]-[0O]\z/] && game.turn == 'black')
+      rook_move = [game.board.squares[game.board.coordinates.find_index([7, 0])], 5, 0]
+      column = 6
+      row = 0
+    else
+      return [nil]
     end
 
     [[piece, column, row], rook_move]

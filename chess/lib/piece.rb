@@ -2,12 +2,13 @@
 
 # lib/piece.rb
 class Piece
-  attr_accessor :position, :color
+  attr_accessor :position, :previous_moves, :color
 
   # require_relative 'colors'
 
   def initialize(position, color)
     self.position = position
+    self.previous_moves = []
     self.color = color
   end
 

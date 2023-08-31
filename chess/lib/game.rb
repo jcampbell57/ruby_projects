@@ -145,10 +145,10 @@ class Game
   end
 
   def turn_loop
-    until checkmate? == true
+    until mate? == true
       display_board
       select_move
-      switch_turn unless checkmate?
+      switch_turn
     end
     end_game
   end
@@ -164,6 +164,7 @@ class Game
 
   def select_move
     if @mode == 1
+      puts 'Check!' if check?(@turn) && mate? == false
       return computer_move unless @turn == @player
 
       input_prompt = "Your turn! Input 'save' or input your next move: "
@@ -209,14 +210,38 @@ class Game
 
     methods_to_check.each do |method|
       result, result_array = send(method, input, self)
-      return result_array if result == true
+      next unless result == true
+
+      return result_array if resolved_check?(result_array)
     end
 
     nil # Return nil if none of the conditions are met
   end
 
+  def resolved_check?(result_array)
+    place_piece(result_array)
+    check_test = check?(@turn)
+    # undo most moves
+    if result_array.size == 3
+      undo_move(result_array[0])
+    # undo castle moves
+    elsif result_array.size == 2
+      undo_move(result_array[0][0])
+      undo_move(result_array[1][0])
+    end
+    check_test ? false : true
+  end
+
+  def undo_move(piece)
+    previous_move = piece.previous_moves.pop
+    previous_move[1].position = piece.position unless previous_move[1].nil?
+    piece.position = previous_move[0]
+    @board.reset_squares
+    @board.set(@pieces)
+    @pieces.each { |board_piece| board_piece.children = board_piece.update_children(self) }
+  end
+
   def computer_move
-    # puts "Computer's turn! The computer chooses: "
     print "Computer's turn! The computer chooses: "
     sleep(0.5)
     2.times do
@@ -228,39 +253,74 @@ class Game
     possible_pieces = @pieces.select do |piece|
       piece.position.nil? == false && piece.color == @turn && piece.children.empty? == false
     end
-    random_piece = possible_pieces.sample
-    random_move = random_piece.children.sample
-    target_column = random_move[0]
-    target_row = random_move[1]
+
+    if possible_pieces.empty?
+      puts
+      end_game
+    end
+
+    if check?(@turn)
+      random_move = nil
+      random_piece = possible_pieces.find do |possible_piece|
+        random_move = possible_piece.children.find do |possible_move|
+          resolved_check?([possible_piece, possible_move[0], possible_move[1]]) == true
+        end
+      end
+
+    else
+      loop do
+        random_piece = possible_pieces.is_a?(Array) ? possible_pieces.sample : possible_pieces
+        if random_piece.nil? || random_piece.children.nil?
+          puts
+          end_game
+        end
+        random_move = random_piece.children.sample
+        break if resolved_check?([random_piece, random_move[0], random_move[1]]) == true
+
+        possible_pieces.delete(random_piece)
+      end
+    end
 
     # Log move
+    notated_move = generate_algebraic_notation(random_piece, random_move)
+    puts " #{notated_move}"
+
+    # execute move
+    result = process_move(notated_move)
+    place_piece(result)
+  end
+
+  def generate_algebraic_notation(chosen_piece, chosen_move)
+    target_column = chosen_move[0]
+    target_row = chosen_move[1]
     log = String.new
-    log += random_piece.class.to_s[0] unless random_piece.instance_of?(Pawn) || random_piece.instance_of?(Knight)
-    log += 'N' if random_piece.instance_of?(Knight)
-    log += reverse_column_index(random_piece.position[0]) if @pieces.find do |piece|
-                                                               next if piece.position.nil?
+    log += chosen_piece.class.to_s[0] unless chosen_piece.instance_of?(Pawn) || chosen_piece.instance_of?(Knight)
+    log += 'N' if chosen_piece.instance_of?(Knight)
+    log += reverse_column_index(chosen_piece.position[0]) if @pieces.find do |piece|
+                                                               next if piece.position.nil? || piece.children.nil?
 
-                                                               piece.instance_of?(random_piece.class) &&
-                                                               piece.children.include?([random_move]) &&
-                                                               piece.position[0] != random_piece.position[0]
+                                                               piece.instance_of?(chosen_piece.class) &&
+                                                               piece.children.include?([chosen_move]) &&
+                                                               piece.position[0] != chosen_piece.position[0]
                                                              end.nil? == false
-    log += random_piece.position[1].to_s if @pieces.find do |piece|
-                                              next if piece.position.nil?
+    log += chosen_piece.position[1].to_s if @pieces.find do |piece|
+                                              next if piece.position.nil? || piece.children.nil?
 
-                                              piece.instance_of?(random_piece.class) &&
-                                              piece.children.include?([random_move]) &&
-                                              piece.position[1] != random_piece.position[1]
+                                              piece.instance_of?(chosen_piece.class) &&
+                                              piece.children.include?([chosen_move]) &&
+                                              piece.position[1] != chosen_piece.position[1]
                                             end.nil? == false
     if @board.squares[@board.coordinates.find_index([target_column, target_row])] != ' '
       log += 'x'
-      log.prepend(reverse_column_index(random_piece.position[0])) if random_piece.instance_of?(Pawn)
+      log.prepend(reverse_column_index(chosen_piece.position[0])) if chosen_piece.instance_of?(Pawn)
     end
     log += reverse_column_index(target_column)
     log += (8 - target_row).to_s
-    puts " #{log}"
-
-    # execute move
-    place_piece(process_move(log))
+    if chosen_piece.is_a?(Pawn) && (@turn == 'white' && target_row.zero? || @turn == 'black' && target_row == 7)
+      log += '='
+      log += %w[B Q N R].sample
+    end
+    log
   end
 
   def place_piece(input_array)
@@ -275,11 +335,18 @@ class Game
       new_column_index = input_array[1]
       new_row_index = input_array[2]
 
-      # eliminate piece
+      # build current move [piece, eliminated_piece]
+      current_move = [piece.position, nil]
+
+      # eliminate piece (if needed)
       target_square = board.squares[board.coordinates.find_index([new_column_index, new_row_index])]
-      eliminate_piece(target_square) unless target_square == ' '
+      if target_square != ' '
+        current_move[1] = target_square
+        eliminate_piece(target_square)
+      end
 
       # place piece
+      piece.previous_moves << current_move
       piece.position = [new_column_index, new_row_index]
       @board.reset_squares
       @board.set(@pieces)
@@ -291,8 +358,6 @@ class Game
 
   def eliminate_piece(piece)
     piece.position = nil
-    # @board.reset_squares
-    # @board.set(@pieces)
   end
 
   def switch_turn
@@ -302,18 +367,38 @@ class Game
     @player = @player == 'white' ? 'black' : 'white'
   end
 
+  def check?(victim_color)
+    king = @pieces.find { |piece| piece.is_a?(King) && piece.color == victim_color }
+    return true if @pieces.any? do |piece|
+                     piece.color != victim_color &&
+                     piece.children.nil? == false &&
+                     piece.children.include?(king.position)
+                   end
+
+    # else
+    false
+  end
+
+  # update mate to check all pieces moves to resolve check, not just king
   def mate?
-    false
-  end
-
-  def checkmate?
-    true if winner?('white') || winner?('black')
-
-    false
-  end
-
-  def winner?(_color)
-    # return true if color won
+    kings = @pieces.select { |board_piece| board_piece.is_a?(King) }
+    kings.each do |king|
+      same_color_pieces = @pieces.select do |board_piece|
+        board_piece.color == king.color &&
+          board_piece.position.nil? == false &&
+          board_piece.children.nil? == false &&
+          board_piece.children.empty? == false
+      end
+      if check?(king.color) &&
+         same_color_pieces.all? do |possible_piece|
+           possible_piece.children.all? do |possible_move|
+             resolved_check?([possible_piece, possible_move[0], possible_move[1]]) == false
+           end
+         end
+        #  king.children.all? { |possible_move| resolved_check?([king, possible_move[0], possible_move[1]]) == false }
+        return true
+      end
+    end
     false
   end
 
@@ -323,18 +408,19 @@ class Game
   end
 
   def display_result
+    winner = @turn == 'black' ? 'white' : 'black'
     display_board
     if @turn == 'white' && @mode == 1
       puts 'You win!'
     else
-      puts "#{@turn.capitalize} wins!"
+      puts "#{winner.capitalize} wins!"
     end
   end
 
   def prompt_new_game
     print 'Would you like to play again? y/n: '
     input = verify_new_game_input(gets.chomp.downcase)
-    return unless input == 'y'
+    exit unless input == 'y'
 
     Game.new.menu
   end

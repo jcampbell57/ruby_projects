@@ -28,13 +28,15 @@ module Serializer
     saved_games.each_with_index do |filename, index|
       puts "- [#{index + 1}] #{filename.delete_prefix('chess/saves/').delete_suffix('.yaml')}"
     end
-    print 'Enter the # of the game you would like to play: '
+    print "Enter 'exit' the # of the game you would like to play: "
     validate_game_choice(gets.chomp, saved_games)
   end
 
   def validate_game_choice(input, saved_games)
     loop do
-      if input.split('').all? { |character| character.match(/[0-9]/) } && saved_games[input.to_i - 1].nil? == false
+      if input.downcase == 'exit'
+        exit
+      elsif input.split('').all? { |character| character.match(/[0-9]/) } && saved_games[input.to_i - 1].nil? == false
         load_game(input.to_i - 1, saved_games)
       else
         print 'Game does not exist, choose again: '

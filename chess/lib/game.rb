@@ -31,17 +31,17 @@ class Game
     puts '[2] Load Game'
     puts '[3] Info'
     print 'Selection: '
-    menu_selection = verify_menu_selection(gets.chomp.to_i)
+    input = gets.chomp.to_i
+    menu_selection = verify_menu_selection(input)
     process_menu_selection(menu_selection)
   end
 
   def verify_menu_selection(input)
-    loop do
-      return input if input.to_s.match(/[1-3]/) && input.to_s.size == 1
-
-      # else
+    if input.to_s.match(/[1-3]/) && input.to_s.size == 1
+      input
+    else
       puts 'Invalid input!'
-      input = select_mode(gets.chomp.to_i)
+      menu
     end
   end
 

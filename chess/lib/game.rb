@@ -29,6 +29,7 @@ class Game
     puts 'Chess?'
     puts '[1] New Game'
     puts '[2] Load Game'
+    puts '[3] Info'
     print 'Selection: '
     menu_selection = verify_menu_selection(gets.chomp.to_i)
     process_menu_selection(menu_selection)
@@ -36,7 +37,7 @@ class Game
 
   def verify_menu_selection(input)
     loop do
-      return input if input.to_s.match(/[1-2]/) && input.to_s.size == 1
+      return input if input.to_s.match(/[1-3]/) && input.to_s.size == 1
 
       # else
       puts 'Invalid input!'
@@ -47,6 +48,20 @@ class Game
   def process_menu_selection(menu_selection)
     new_game if menu_selection == 1
     choose_game if menu_selection == 2
+    return unless menu_selection == 3
+
+    display_info
+    menu
+  end
+
+  def display_info
+    puts 'This is a game of Chess played in the console using algebraic notation:'
+    puts '- standard moves (ex: Be5, Nf3, c5)'
+    puts '- disambiguating moves (ex: Qh4e1, R1a3, Rdf8)'
+    puts '- capture moves (ex: Qh4xe1, R1xa3, Rdxf8, Bxe5, Nxf3, exd6)'
+    puts '- pawn promotion moves (ex: e8Q, e8=Q, e8(Q), e8/Q)'
+    puts '- pawn promotion capture moves (ex: dxe8Q, dxe8=Q, dxe8(Q), dxe8/Q)'
+    puts '- castling moves (ex: Kg1, Kb8, 0-0-0, O-O)'
   end
 
   def new_game
@@ -125,10 +140,10 @@ class Game
       puts 'Check!' if check?(@turn) && mate? == false
       return computer_move unless @turn == @player
 
-      input_prompt = "Your turn! Input 'save' or input your next move: "
+      input_prompt = "Your turn! Input 'save'/'info' or input your next move: "
     elsif @mode == 2
       input_prompt = @turn == 'white' ? "White's turn!" : "Black's turn!"
-      input_prompt += " Input 'save' or input your next move: "
+      input_prompt += " Input 'save'/'info' or input your next move: "
     end
     input = get_input(input_prompt)
     verify_move(input)
@@ -139,6 +154,9 @@ class Game
       if input.downcase == 'save'
         process_save
         exit
+      elsif input.downcase == 'info'
+        display_info
+        input = get_input("Input 'save'/'info' or input your next move: ")
       else
         result = process_move(input)
         if result.nil?

@@ -2,8 +2,6 @@
 
 # lib/process_moves.rb
 module ProcessMoves
-  # require_relative 'board'
-
   # standard moves (ex: Be5, Nf3, c5):
   def valid_standard_move?(input, game)
     return false, [] if input.nil?

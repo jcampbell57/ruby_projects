@@ -62,6 +62,7 @@ class Game
     puts '- pawn promotion moves (ex: e8Q, e8=Q, e8(Q), e8/Q)'
     puts '- pawn promotion capture moves (ex: dxe8Q, dxe8=Q, dxe8(Q), dxe8/Q)'
     puts '- castling moves (ex: Kg1, Kb8, 0-0-0, O-O)'
+    puts "- this game supports '+' or '#' at the end of any input to signify check or mate respectively"
   end
 
   def new_game
@@ -184,8 +185,11 @@ class Game
       valid_castling_move?
     ]
 
+    input.delete_suffix!('+')
+    input.delete_suffix!('#')
+
     methods_to_check.each do |method|
-      result, result_array = send(method, input, self)
+      result, result_array = send(method, input.delete('+#'), self)
       next unless result == true
 
       return result_array if resolved_check?(result_array)
@@ -269,6 +273,7 @@ class Game
   def generate_algebraic_notation(chosen_piece, chosen_move)
     target_column = chosen_move[0]
     target_row = chosen_move[1]
+
     log = String.new
     log += chosen_piece.class.to_s[0] unless chosen_piece.instance_of?(Pawn) || chosen_piece.instance_of?(Knight)
     log += 'N' if chosen_piece.instance_of?(Knight)
@@ -296,12 +301,33 @@ class Game
       log += '='
       log += %w[B Q N R].sample
     end
+
+    # check for check or mate
+    result = process_move(log)
+    place_piece(result)
+    enemy = @turn == 'black' ? 'white' : 'black'
+
+    log += '+' if check?(enemy) && mate? == false
+    log += '#' if mate?
+
+    # undo most moves
+    if result.size == 3
+      undo_move(result[0])
+    # undo castle moves
+    elsif result.size == 2
+      undo_move(result[0][0])
+      undo_move(result[1][0])
+    end
+
     log
   end
 
   def place_piece(input_array)
+    # pawn promotion returns a piece to delete:
+    if input_array.size == 2 && input_array[1].nil?
+      eliminate_piece(input_array[0])
     # castling move returns two moves to process:
-    if input_array.size == 2
+    elsif input_array.size == 2
       input_array.each do |array|
         place_piece(array)
       end
@@ -333,7 +359,12 @@ class Game
   end
 
   def eliminate_piece(piece)
+    piece.previous_moves << [piece.position, nil]
     piece.position = nil
+
+    @board.reset_squares
+    @board.set(@pieces)
+    @pieces.each { |board_piece| board_piece.children = board_piece.update_children(self) }
   end
 
   def switch_turn
@@ -371,7 +402,6 @@ class Game
              resolved_check?([possible_piece, possible_move[0], possible_move[1]]) == false
            end
          end
-        #  king.children.all? { |possible_move| resolved_check?([king, possible_move[0], possible_move[1]]) == false }
         return true
       end
     end
@@ -386,7 +416,9 @@ class Game
   def display_result
     winner = @turn == 'black' ? 'white' : 'black'
     display_board
-    if @turn == 'white' && @mode == 1
+    if mate? == false
+      puts 'Its a draw!'
+    elsif @turn == 'white' && @mode == 1
       puts 'You win!'
     else
       puts "#{winner.capitalize} wins!"

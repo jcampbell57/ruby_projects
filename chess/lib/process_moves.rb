@@ -4,10 +4,6 @@
 module ProcessMoves
   # require_relative 'board'
 
-  # still need to add:
-  # check moves (ex: anything above with "+" or "ch" at the end):
-  # checkmate moves (ex: anything above with "#" or "mate" at the end):
-
   # standard moves (ex: Be5, Nf3, c5):
   def valid_standard_move?(input, game)
     return false, [] if input.nil?
@@ -126,19 +122,16 @@ module ProcessMoves
     game.pieces << piece
 
     # delete old piece
-    old_piece = nil
-    game.pieces.each do |board_piece|
-      # skip captured pieces
-      next if board_piece.children.nil?
-      next unless board_piece.instance_of?(Pawn) && board_piece.children.include?([column, row])
-
-      old_piece = board_piece
-      break
+    pawn_column = column_index(input[0])
+    old_piece = game.pieces.find do |board_piece|
+      board_piece.children.nil? == false &&
+        board_piece.instance_of?(Pawn) &&
+        board_piece.position[0] == pawn_column &&
+        board_piece.children.include?([column, row])
     end
-    old_piece.position = nil
 
     # return
-    [piece, column, row]
+    [[piece, column, row], [old_piece, nil]]
   end
 
   # pawn promotion capture moves (ex: dxe8Q, dxe8=Q, dxe8(Q), dxe8/Q):
@@ -171,22 +164,16 @@ module ProcessMoves
     game.pieces << piece
 
     # delete old piece
-    old_piece = nil
     pawn_column = column_index(input[0])
-    game.pieces.each do |board_piece|
-      # skip captured pieces
-      next if board_piece.children.nil?
-      next unless board_piece.instance_of?(Pawn) &&
-                  board_piece.position[0] == pawn_column &&
-                  board_piece.children.include?([column, row])
-
-      old_piece = board_piece
-      break
+    old_piece = game.pieces.find do |board_piece|
+      board_piece.children.nil? == false &&
+        board_piece.instance_of?(Pawn) &&
+        board_piece.position[0] == pawn_column &&
+        board_piece.children.include?([column, row])
     end
-    old_piece.position = nil
 
     # return
-    [piece, column, row]
+    [[piece, column, row], [old_piece, nil]]
   end
 
   # capture moves (ex: Qh4xe1, R1xa3, Rdxf8, Bxe5, Nxf3, exd6):
@@ -195,8 +182,7 @@ module ProcessMoves
 
     # check to see if input matches syntax
     first_match = input.to_s.match(/\A[BKNPQR][a-h][1-8]x[a-h][1-8]\z/)&.[](0)
-    second_match = input.to_s.match(/\A[BKNQR][a-h]x[a-h][1-8]\z/)&.[](0) ||
-                   input.to_s.match(/\AP[a-h]x[a-h][1-7]\z/)&.[](0)
+    second_match = input.to_s.match(/\A[BKNQR][a-h]x[a-h][1-8]\z/)&.[](0)
     third_match = input.to_s.match(/\A[BKNPQR][1-8]x[a-h][1-8]\z/)&.[](0)
     fourth_match = input.to_s.match(/\A[BKNPQR]x[a-h][1-8]\z/)&.[](0)
     fifth_match = input.to_s.match(/\A[a-h]x[a-h][1-7]\z/)&.[](0)

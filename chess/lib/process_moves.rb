@@ -270,6 +270,7 @@ module ProcessMoves
 
   def can_castle?(input, game, king)
     king.position == (king.color == 'white?' ? [4, 7] : [4, 0]) &&
+      king.previous_moves.empty? &&
       if input == 'Kb1' || input[/\A[0O]-[0O]-[0O]\z/]
         game.board.squares[game.board.coordinates.find_index([0, 7])].is_a?(Rook)
         spaces_clear?([[1, 7], [2, 7], [3, 7]], game)

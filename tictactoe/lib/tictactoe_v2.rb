@@ -12,7 +12,7 @@ class Game
     self.computer_options = computer_options
     self.mode = mode
     self.marker = marker
-    # prompt_player_move
+    prompt_player_move
   end
 
   def prompt_player_move
@@ -110,4 +110,4 @@ class Game
   end
 end
 
-# Game.new
+Game.new

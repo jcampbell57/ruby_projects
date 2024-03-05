@@ -3,6 +3,7 @@
 require_relative 'lib/linked_list'
 
 ll = LinkedList.new
+# ll.append(400)
 ll.prepend(200)
 ll.prepend(100)
 ll.append(400)

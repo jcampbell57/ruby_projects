@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'lib/node'
+require_relative 'node'
 
 # linkedlist class
 class LinkedList
@@ -13,14 +13,14 @@ class LinkedList
   end
 
   def append(value)
+    node = Node.new(value)
     # if empty, make head
     if head.nil?
-      tail.next_node = node
+      self.head = node
     else
-      node = Node.new(value)
       tail.next_node = node
-      self.tail = node
     end
+    self.tail = node
     self.size += 1
   end
 
